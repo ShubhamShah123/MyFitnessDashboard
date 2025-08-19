@@ -1,0 +1,65 @@
+.dataTable {
+
+  .dataGrid {
+    padding: 20px;
+    background-color: #2a3447;
+    border-radius: 12px;
+    border-color: #222b3c;
+    box-shadow: 0 0 2px #222b3c;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+    // ✅ Change header background color
+    .MuiDataGrid-columnHeaders {
+      background-color: #394b61; // ← new header background color
+      color: black;
+      font-weight: bold;
+    }
+
+    // ✅ Change row separator (bottom border between rows)
+    .MuiDataGrid-row {
+      border-bottom: 1px solid #4a5a70; // ← new row separator color
+    }
+
+    .MuiDataGrid-cell {
+      color: white;
+    }
+
+    .MuiDataGrid-row:hover > .MuiDataGrid-cell {
+      background-color: #6a717e;
+      color: black;
+    }
+
+    .MuiDataGrid-selectedRowCount {
+      color: white;
+      font-weight: 500;
+    }
+
+    .MuiCheckbox-root {
+      color: white;
+    }
+
+    .MuiDataGrid-footerContainer {
+      background-color: #2a3447;
+      color: white;
+    }
+
+    .MuiDataGrid-cell--editing {
+      background-color: black;
+    }
+
+    .MuiDataGrid-row.Mui-selected > .MuiDataGrid-cell {
+      background-color: cornflowerblue !important;
+      color: black !important;
+      font-weight: bold;
+    }
+
+    .MuiDataGrid-row.Mui-selected:hover {
+      background-color: #d32f2f !important;
+    }
+
+    .MuiDataGrid-columnHeader:focus,
+    .MuiDataGrid-cell:focus {
+      outline: none;
+    }
+  }
+}

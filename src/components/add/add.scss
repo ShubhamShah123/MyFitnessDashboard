@@ -1,0 +1,79 @@
+/* @components/add/add.scss */
+.add-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(33, 33, 33, 0.6); // Material Grey 800 with transparency
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+
+  .modal-content {
+    background: #2a3447; // Material Grey 50
+    padding: 80px 25px;
+    border-radius: 12px;
+    width: 370px;
+    position: relative;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+
+    h2 {
+      margin-bottom: 20px;
+      font-size: 22px;
+      color: white; // Material Indigo 500
+    }
+
+    .close-button {
+      position: absolute;
+      top: 12px;
+      right: 16px;
+      font-size: 44px;
+      cursor: pointer;
+      color: #757575; // Grey 600
+
+      &:hover {
+        color: #e53935; // Material Red 600
+      }
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+
+      input {
+        padding: 20px;
+        font-size: 15px;
+        border: 1px solid #cfd8dc; // Material Blue Grey 100
+        border-radius: 6px;
+        outline-color: #3f51b5; // Indigo 500
+        transition: border-color 0.2s ease;
+        background-color: #2a3447;
+        color: white;
+
+        &:focus {
+          border-color: #3f51b5;
+        }
+      }
+
+      button {
+        margin-top: 10px;
+        padding: 20px;
+        background-color: #3f51b5; // Indigo 500
+        color: white;
+        border: none;
+        font-size: 15px;
+        font-weight: 500;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+
+        &:hover {
+          background-color: #303f9f; // Indigo 700
+        }
+      }
+    }
+  }
+}

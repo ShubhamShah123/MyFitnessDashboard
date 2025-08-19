@@ -1,0 +1,633 @@
+// Variables
+$primary-dark: #0a0a0a;
+$secondary-dark: #1a1a1a;
+$card-dark: #111111;
+$border-dark: #2a2a2a;
+$text-primary: #ffffff;
+$text-secondary: #a1a1a1;
+$text-muted: #666666;
+$success-color: #10b981;
+$success-light: #34d399;
+$danger-color: #ef4444;
+$danger-light: #f87171;
+$accent-blue: #3b82f6;
+$accent-purple: #8b5cf6;
+$accent-emerald: #10b981;
+
+// Mixins
+@mixin gradient-bg($color1, $color2, $angle: 135deg) {
+  background: linear-gradient($angle, $color1 0%, $color2 100%);
+}
+
+@mixin glass-effect {
+  backdrop-filter: blur(12px);
+  background: rgba(17, 17, 17, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@mixin card-hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+@mixin button-hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 15px 35px rgba(16, 185, 129, 0.4);
+}
+
+// Animations
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// Main container
+.progress-upload {
+  min-height: 100vh;
+  @include gradient-bg($primary-dark, #000000);
+  color: $text-primary;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  position: relative;
+  overflow-x: hidden;
+
+  &::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 20% 20%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 60%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    position: relative;
+    z-index: 1;
+  }
+}
+
+// Header
+.page-header {
+  text-align: center;
+  margin-bottom: 4rem;
+  position: relative;
+  animation: slideInUp 0.8s ease-out;
+
+  .header-background {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+    height: 300px;
+    @include gradient-bg(rgba($accent-emerald, 0.2), rgba($accent-blue, 0.2));
+    border-radius: 50%;
+    filter: blur(80px);
+    z-index: -1;
+  }
+
+  .page-title {
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: 900;
+    margin-bottom: 1rem;
+    @include gradient-bg($accent-emerald, $accent-blue);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    display:block;
+  }
+
+  .page-subtitle {
+    font-size: 1.25rem;
+    color: $text-secondary;
+    font-weight: 500;
+    margin-bottom: 2rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .title-underline {
+    width: 80px;
+    height: 4px;
+    @include gradient-bg($accent-emerald, $accent-blue);
+    margin: 0 auto;
+    border-radius: 2px;
+  }
+}
+
+// Form
+.upload-form {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+// Form sections
+.form-sections-row{
+  display:flex;
+  gap: 2rem;
+  align-items: flex-start;
+  .form-section {
+    flex: 1;
+    min-width: 0; // Prevent overflow on small screens
+  @include glass-effect;
+  border-radius: 24px;
+  padding: 2.5rem;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: slideInUp 0.8s ease-out;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    @include gradient-bg($accent-emerald, $accent-blue);
+  }
+
+  &:hover {
+    @include card-hover;
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+
+  &.meal-section {
+    animation-delay: 0.2s;
+  }
+
+  &.measurements-section {
+    animation-delay: 0.4s;
+  }
+}
+}
+
+// Section headers
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+
+  .section-icon-wrapper {
+    width: 60px;
+    height: 60px;
+    @include gradient-bg($accent-emerald, $success-light);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+  }
+
+  .section-icon {
+    font-size: 1.5rem;
+  }
+
+  .section-title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: $text-primary;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.01em;
+  }
+
+  .section-description {
+    color: $text-secondary;
+    font-size: 1rem;
+    font-weight: 500;
+  }
+}
+
+// Meal tracking
+.meal-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+.meal-item {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), transparent);
+    pointer-events: none;
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  }
+
+  .meal-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+
+    .meal-icon {
+      font-size: 1.5rem;
+    }
+
+    .meal-label {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: $text-primary;
+      letter-spacing: -0.01em;
+    }
+  }
+}
+
+// Radio buttons
+.radio-group {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.radio-option {
+  flex: 1;
+  cursor: pointer;
+
+  input[type="radio"] {
+    display: none;
+  }
+
+  .radio-button {
+    padding: 0.875rem 1rem;
+    border-radius: 12px;
+    border: 2px solid transparent;
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.875rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.05);
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      transition: left 0.5s ease;
+    }
+
+    &:hover::before {
+      left: 100%;
+    }
+
+    &.taken {
+      color: $text-secondary;
+      border-color: rgba(16, 185, 129, 0.3);
+
+      &:hover {
+        border-color: rgba(16, 185, 129, 0.5);
+        background: rgba(16, 185, 129, 0.1);
+      }
+    }
+
+    &.missed {
+      color: $text-secondary;
+      border-color: rgba(239, 68, 68, 0.3);
+
+      &:hover {
+        border-color: rgba(239, 68, 68, 0.5);
+        background: rgba(239, 68, 68, 0.1);
+      }
+    }
+  }
+
+  input[type="radio"]:checked + .radio-button {
+    &.taken {
+      @include gradient-bg($success-color, $success-light);
+      color: white;
+      border-color: $success-light;
+      box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+      transform: scale(1.02);
+    }
+
+    &.missed {
+      @include gradient-bg($danger-color, $danger-light);
+      color: white;
+      border-color: $danger-light;
+      box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
+      transform: scale(1.02);
+    }
+  }
+}
+
+// Body measurements
+.measurements-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.measurement-item {
+  .measurement-label {
+    display: block;
+    width: 100%;
+
+    .label-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+
+      .measurement-icon {
+        font-size: 1rem;
+      }
+
+      .label-text {
+        font-size: 0.875rem;
+        font-weight: 700;
+        color: $text-primary;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .unit-badge {
+        font-size: 0.75rem;
+        color: $text-muted;
+        background: rgba(255, 255, 255, 0.1);
+        padding: 0.25rem 0.5rem;
+        border-radius: 6px;
+        font-weight: 500;
+      }
+    }
+  }
+
+  .input-wrapper {
+    position: relative;
+
+    .input-glow {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba($accent-blue, 0.1), rgba($accent-purple, 0.1));
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+
+    &:hover .input-glow {
+      opacity: 1;
+    }
+  }
+
+  .measurement-input {
+    width: 100%;
+    padding: 1rem 1.25rem;
+    background: rgba(0, 0, 0, 0.4);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    color: $text-primary;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    outline: none;
+    position: relative;
+    z-index: 1;
+
+    &::placeholder {
+      color: $text-muted;
+    }
+
+    &:focus {
+      border-color: $accent-blue;
+      box-shadow: 0 0 0 3px rgba($accent-blue, 0.2);
+      background: rgba(0, 0, 0, 0.6);
+    }
+
+    &:hover:not(:focus) {
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+  }
+}
+
+// Submit button
+.form-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+  animation: slideInUp 0.8s ease-out 0.6s both;
+}
+
+.submit-btn {
+  position: relative;
+  padding: 1.25rem 3rem;
+  @include gradient-bg($accent-emerald, $accent-blue);
+  border: none;
+  border-radius: 16px;
+  color: white;
+  font-size: 1.125rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+
+  &:hover:not(:disabled) {
+    @include button-hover;
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0) scale(0.98);
+  }
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+
+  .btn-content {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    position: relative;
+    z-index: 2;
+
+    .submit-icon {
+      width: 20px;
+      height: 20px;
+      transition: transform 0.3s ease;
+    }
+  }
+
+  &:hover:not(:disabled) .submit-icon {
+    transform: translateX(4px);
+  }
+
+  .btn-shimmer {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.6s ease;
+  }
+
+  &:hover:not(:disabled) .btn-shimmer {
+    left: 100%;
+  }
+
+  .btn-glow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent);
+    border-radius: 16px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  &:hover:not(:disabled) .btn-glow {
+    opacity: 1;
+  }
+
+  &.loading {
+    .btn-text {
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    .submit-icon {
+      animation: spin 1s linear infinite;
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .progress-upload .container {
+    padding: 1rem;
+  }
+
+  .page-header {
+    margin-bottom: 2.5rem;
+
+    .page-title {
+      font-size: 2.5rem;
+    }
+
+    .page-subtitle {
+      font-size: 1.125rem;
+    }
+  }
+
+  .form-section {
+    padding: 1.5rem;
+  }
+
+  .section-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+
+    .section-icon-wrapper {
+      align-self: center;
+    }
+  }
+
+  .meal-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .measurements-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .radio-group {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .submit-btn {
+    width: 100%;
+    padding: 1rem 2rem;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .progress-upload .container {
+    padding: 0.75rem;
+  }
+
+  .page-header .page-title {
+    font-size: 2rem;
+  }
+
+  .form-section {
+    padding: 1rem;
+  }
+
+  .section-header .section-title {
+    font-size: 1.5rem;
+  }
+
+  .meal-item {
+    padding: 1rem;
+  }
+
+  .measurement-input {
+    padding: 0.875rem 1rem;
+  }
+}
