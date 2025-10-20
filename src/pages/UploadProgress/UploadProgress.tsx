@@ -7,7 +7,7 @@ interface MealTrackingData {
   breakfast: "taken" | "missed" | "";
   lunch: "taken" | "missed" | "";
   snack: "taken" | "missed" | "";
-  preworkout: "taken" | "missed" | "";
+  preWorkout: "taken" | "missed" | "";
   dinner: "taken" | "missed" | "";
   workout: "taken" | "missed" | "";
 }
@@ -143,7 +143,7 @@ export default function ProgressUploadForm() {
           breakfast: sVal.breakfast || "",
           lunch: sVal.lunch || "",
           snack: sVal.snack || "",
-          preworkout: sVal.preWorkout || "",
+          preWorkout: sVal.preWorkout || "",
           dinner: sVal.dinner || "",
           workout: sVal.workout || "",
         });
@@ -171,7 +171,7 @@ export default function ProgressUploadForm() {
     { key: "breakfast", label: "Breakfast", icon: "🍳" },
     { key: "lunch", label: "Lunch", icon: "🥗" },
     { key: "snack", label: "Snack", icon: "🥜" },
-    { key: "preworkout", label: "Pre-workout", icon: "💪" },
+    { key: "preWorkout", label: "Pre-workout", icon: "💪" },
     { key: "dinner", label: "Dinner", icon: "🍽️" },
     { key: "workout", label: "Workout", icon: "🏋️" },
   ];

@@ -5,6 +5,16 @@ import TopBox from "../../components/topBox/TopBox";
 import "./home.scss";
 import { testGetWeights } from "../../url";
 
+interface MonthlyApiItem {
+  month: string;          // e.g., "2025-10"
+  averageWeight: number;
+}
+
+interface WeeklyApiItem {
+  week_number: number;    // e.g., 1, 2, 3...
+  average_weight: number;
+}
+
 const Home = () => {
   const [monthlyData, setMonthlyData] = useState([]);
   const [weeklyData, setWeeklyData] = useState([]);
@@ -15,7 +25,7 @@ const Home = () => {
         const res = await fetch(testGetWeights);
         const result = await res.json();
         console.log("MOnth Result: ",result)
-        const formattedData = result.monthly.map((item) => {
+        const formattedData = result.monthly.map((item: MonthlyApiItem) => {
           console.log("Item: ", item)
           const [year, month] = item.month.split('-')
           console.log("Year: "+year+" | Month: "+month)
@@ -33,7 +43,7 @@ const Home = () => {
         });
         console.log(result)      
         setMonthlyData(formattedData);
-        const weekly = result.weekly.map(item => ({
+        const weekly = result.weekly.map((item: WeeklyApiItem) => ({
           name: `W${item.week_number}`, // or item.date_range if you prefer
           weight: item.average_weight
         }));

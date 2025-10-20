@@ -9,7 +9,7 @@ const Login = () => {
   const [userPassword, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [cookies, setCookie] = useCookies(['key'])
+  const [,setCookie] = useCookies(['key'])
   const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {

@@ -17,12 +17,6 @@ import DialogTitle from "@mui/material/DialogTitle";
 import "./workoutDetail.scss";
 import ModalBox from "../../components/modalBox/ModalBox";
 
-interface WorkoutItem {
-	id: string;
-	day: string;
-	exercise: string;
-}
-
 interface ExerciseDetail {
 	desc: string;
 	exercise: string;
@@ -35,13 +29,13 @@ interface ExerciseDetail {
 const WorkoutDetail = () => {
 	const { id } = useParams<{ id: string }>();
 	const navigate = useNavigate();
-	const [exerciseID, setExerciseId] = useState(null);
+	const [exerciseID, setExerciseId] = useState<string | null>(null);
+
 	// Workout and exercise data states
-	const [workout, setWorkout] = useState<WorkoutItem | null>(null);
 	const [exerciseDetails, setExerciseDetails] = useState<ExerciseDetail[]>([]);
 	const [loading, setLoading] = useState(true);
 
-	const [dayValue, setDayValue] = useState(null)
+	const [,setDayValue] = useState(null)
 	// Modal for viewing exercise details
 
 	// Confirmation modal for add/delete operations
@@ -85,7 +79,7 @@ const WorkoutDetail = () => {
 				console.log(wdResp);
 				setDayValue(wdResp.day)
 				console.log("The ID is " + id);
-				setExerciseId(id);
+				setExerciseId(id || null);
 
 				// Map API response to ExerciseDetail
 				setExerciseDetails(
@@ -383,7 +377,7 @@ const WorkoutDetail = () => {
 									<tr key={`${groupNumber}-${exercise.id}-${index}`}>
 										<td
 											className="exercise-cell"
-											onClick={() => handleExerciseClick(exercise, id)}
+											onClick={() => id && handleExerciseClick(exercise, id)}
 										>
 											<div className="exercise-name">
 												{exercise.exercise}

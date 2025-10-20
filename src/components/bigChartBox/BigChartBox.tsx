@@ -1,6 +1,12 @@
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
-const BigChartBox = ({ title, data, dataKey }) => {
+interface BigChartBoxProps {
+  title: string;
+  data: any[];       // or better: define the shape of each data object
+  dataKey: string;
+}
+
+const BigChartBox = ({ title, data, dataKey }: BigChartBoxProps) => {
   return (
     <div className="bigChartBox">
       <h2>{title}</h2><br/>

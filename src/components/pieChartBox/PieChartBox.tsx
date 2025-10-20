@@ -2,9 +2,17 @@ import { testGetWorkoutDay } from "../../url";
 import "./pieChartBox.scss";
 import { useEffect, useState } from "react";
 
+interface Exercise {
+  exercise: string;
+  desc?: string;
+  gif?: string;
+  reps?: string;
+  sets?: number;
+}
+
 interface WorkoutData {
   name: string;
-  exercise_list: string[];
+  exercise_list: Exercise[];
 }
 
 const PieChartBox = () => {

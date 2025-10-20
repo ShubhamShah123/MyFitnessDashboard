@@ -8,7 +8,7 @@ const Navbar = () => {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [streakCount, setStreakCount] = useState(0);
   const navigate = useNavigate();
-  const [cookies, setCookie, removeCookie] = useCookies(['key'])
+  const [,, removeCookie] = useCookies(['key'])
   useEffect(() => {
     const getStreakCounter = async () => {
       setStreakCount(25);
@@ -38,12 +38,12 @@ const Navbar = () => {
 
   // Click outside to close dropdown
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (showUserMenu && !event.target.closest('.user-section')) {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (showUserMenu && !target.closest('.user-section')) {
         setShowUserMenu(false);
       }
     };
-
     document.addEventListener('click', handleClickOutside);
     return () => document.removeEventListener('click', handleClickOutside);
   }, [showUserMenu]);

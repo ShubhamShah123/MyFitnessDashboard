@@ -12,7 +12,7 @@ interface UserProfileData {
 }
 
 const UserProfile = () => {
-  const [cookies, setCookies] = useCookies(["key"]);
+  const [cookies] = useCookies(["key"]);
   const [profileData, setProfileData] = useState<UserProfileData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

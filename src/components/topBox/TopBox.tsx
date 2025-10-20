@@ -2,8 +2,15 @@ import "./topBox.scss";
 import { useEffect, useState } from "react";
 import { testGetRecentWorkouts } from "../../url";
 
+interface WorkoutSession {
+  day: string;
+  name: string;
+  date: string;
+  sessionTime: string;
+}
+
 const TopBox = () => {
-	const [workouts, setWorkouts] = useState([]);
+	const [workouts, setWorkouts] = useState<WorkoutSession[]>([]);
 	useEffect(() => {
 		const fetchRecentWorkouts = async () => {
 			try {
