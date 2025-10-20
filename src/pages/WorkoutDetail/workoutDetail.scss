@@ -1,12 +1,81 @@
-// workoutDetail.scss - Simple Black Material Theme
+// workoutDetail.scss with home.scss theming
+@import "../../styles/variables.scss";
+
+// Variables (matching home.scss theme)
+$primary-dark: #0a0a0a;
+$secondary-dark: #1a1a1a;
+$card-dark: #111111;
+$border-dark: #2a2a2a;
+$text-primary: #ffffff;
+$text-secondary: #a1a1a1;
+$text-muted: #666666;
+$success-color: #10b981;
+$success-light: #34d399;
+$danger-color: #ef4444;
+$danger-light: #f87171;
+$accent-blue: #3b82f6;
+$accent-purple: #8b5cf6;
+$accent-emerald: #10b981;
+$accent-orange: #f97316;
+
+// Mixins
+@mixin gradient-bg($color1, $color2, $angle: 135deg) {
+  background: linear-gradient($angle, $color1 0%, $color2 100%);
+}
+
+@mixin glass-effect {
+  backdrop-filter: blur(12px);
+  background: rgba(17, 17, 17, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@mixin card-hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+// Animations
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
 .WorkoutDetail {
   padding: 1.25rem;
   max-width: 1600px;
   margin: 0 auto;
   min-height: 100vh;
-  color: #ffffff;
-  background: #000000;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: $text-primary;
+  // @include gradient-bg($primary-dark, #000000);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  position: relative;
+  overflow-x: hidden;
+
+  // Background overlay effect (matching home.scss)
+  &::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 20% 20%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 60%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
   
   .workout-header {
     display: grid;
@@ -15,11 +84,12 @@
     gap: 1.75rem;
     margin-bottom: 2rem;
     padding: 1.75rem 2rem;
-    border-radius: 8px;
-    background: #1a1a1a;
-    border: 1px solid #333333;
+    border-radius: 24px;
+    @include glass-effect;
     position: relative;
     overflow: hidden;
+    z-index: 1;
+    animation: slideInUp 0.8s ease-out;
 
     &::before {
       content: '';
@@ -28,29 +98,33 @@
       left: 0;
       right: 0;
       height: 3px;
-      background: #4caf50;
+      background: linear-gradient(90deg, $accent-emerald, $accent-blue, $accent-purple, $accent-emerald);
+      background-size: 200% 100%;
+      animation: gradientShift 3s ease infinite;
     }
 
     .back-button {
       font-size: 0.85rem;
       font-weight: 600;
       padding: 0.75rem 1.5rem;
-      border-radius: 4px;
-      background: #333333;
-      color: #ffffff;
-      border: 1px solid #555555;
-      transition: all 0.2s ease;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.05);
+      color: $text-primary;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       cursor: pointer;
       display: flex;
       align-items: center;
       gap: 0.5rem;
 
       &:hover {
-        background: #555555;
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(16, 185, 129, 0.4);
+        transform: translateX(-4px);
       }
 
       &:active {
-        background: #222222;
+        transform: translateX(-2px);
       }
     }
 
@@ -61,7 +135,7 @@
         font-size: 2.25rem;
         font-weight: 700;
         margin: 0;
-        color: #ffffff;
+        color: $text-primary;
         letter-spacing: -0.02em;
 
         @media (max-width: 768px) {
@@ -85,12 +159,12 @@
         align-items: center;
         gap: 0.5rem;
         font-size: 0.8rem;
-        color: #999999;
+        color: $text-secondary;
         
         .stat-icon {
           width: 14px;
           height: 14px;
-          color: #4caf50;
+          color: $success-color;
         }
       }
     }
@@ -113,28 +187,32 @@
     margin-bottom: 1.5rem;
     display: flex;
     justify-content: center;
+    z-index: 1;
+    position: relative;
 
     .add-exercise-button {
       font-size: 0.9rem;
       font-weight: 600;
       padding: 0.875rem 1.75rem;
-      border-radius: 4px;
-      background: #4caf50;
-      color: #ffffff;
-      border: 1px solid #45a049;
-      transition: all 0.2s ease;
+      border-radius: 25px;
+      @include gradient-bg($accent-emerald, $success-light);
+      color: $text-primary;
+      border: none;
+      // background: rgba(33, 150, 243, 0.2);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       cursor: pointer;
       display: flex;
       align-items: center;
       gap: 0.625rem;
+      // box-shadow: 0 5px 25px rgba(16, 185, 129, 0.3);
 
       &:hover {
-        background: #45a049;
-        border-color: #3d8b40;
+        transform: translateY(-2px) scale(1.02);
+        box-shadow: 0 1px 10px rgba(16, 185, 129, 0.4);
       }
 
       &:active {
-        background: #3d8b40;
+        transform: translateY(0) scale(0.98);
       }
 
       svg {
@@ -147,19 +225,45 @@
     display: flex;
     flex-direction: column;
     gap: 1.25rem;
+    position: relative;
+    z-index: 1;
 
     .exercise-group {
-      background: #1a1a1a;
-      border-radius: 8px;
+      @include glass-effect;
+      border-radius: 24px;
       overflow: hidden;
-      border: 1px solid #333333;
-      transition: all 0.2s ease;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      animation: slideInUp 0.8s ease-out;
+      animation-fill-mode: both;
+      position: relative;
+
+      @for $i from 1 through 10 {
+        &:nth-child(#{$i}) {
+          animation-delay: #{$i * 0.1}s;
+        }
+      }
+
+      &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+        transition: left 0.6s ease;
+        pointer-events: none;
+        z-index: 2;
+      }
 
       &:hover {
-        border-color: #4caf50;
-      }
-      &:active {
-        border-color: #0a0a0a;
+        border-color: rgba(16, 185, 129, 0.4);
+        transform: translateY(-2px);
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+
+        &::after {
+          left: 100%;
+        }
       }
 
       .group-header {
@@ -167,13 +271,15 @@
         justify-content: space-between;
         align-items: center;
         padding: 1.5rem 1.75rem;
-        background: #222222;
-        border-bottom: 1px solid #333333;
+        background: rgba(255, 255, 255, 0.05);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        position: relative;
+        z-index: 3;
 
         h2 {
           font-size: 1.25rem;
           font-weight: 600;
-          color: #ffffff;
+          color: $text-primary;
           margin: 0;
           display: flex;
           align-items: center;
@@ -184,25 +290,26 @@
             width: 6px;
             height: 6px;
             border-radius: 50%;
-            background: #4caf50;
+            background: $success-color;
+            box-shadow: 0 0 8px $success-color;
           }
         }
 
         .group-indicator {
           padding: 0.4rem 0.875rem;
-          border-radius: 4px;
+          border-radius: 12px;
           font-size: 0.7rem;
           font-weight: 600;
           text-transform: uppercase;
           letter-spacing: 0.05em;
-          background: #2196f3;
-          color: #ffffff;
-          border: 1px solid #1976d2;
+          background: rgba(33, 150, 243, 0.2);
+          color: #60a5fa;
+          border: 1px solid rgba(33, 150, 243, 0.4);
 
           &.superset {
-            background: #ff9800;
-            color: #ffffff;
-            border: 1px solid #f57c00;
+            background: rgba(255, 152, 0, 0.2);
+            color: #fb923c;
+            border: 1px solid rgba(255, 152, 0, 0.4);
           }
         }
       }
@@ -213,17 +320,17 @@
         font-size: 0.85rem;
 
         .table-header {
-          background: #2a2a2a;
+          background: rgba(255, 255, 255, 0.03);
           
           th {
             padding: 1rem 1.25rem;
             text-align: left;
             font-weight: 600;
-            color: #ffffff;
+            color: $text-primary;
             font-size: 0.75rem;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            border-bottom: 2px solid #333333;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
 
             &.exercise-col {
               width: 35%;
@@ -252,15 +359,12 @@
 
         .table-body {
           tr {
-            transition: all 0.2s ease;
-            border-bottom: 1px solid #333333;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 
             &:hover {
-              background: #2a2a2a;
+              background: rgba(255, 255, 255, 0.05);
               cursor: pointer;
-            }
-            &:active {
-              background: #0a0a0a;
             }
 
             &:last-child {
@@ -270,7 +374,7 @@
             td {
               padding: 1.25rem;
               vertical-align: top;
-              color: #cccccc;
+              color: $text-secondary;
 
               @media (max-width: 768px) {
                 padding: 0.875rem;
@@ -283,20 +387,22 @@
                   gap: 0.875rem;
                   font-size: 0.95rem;
                   font-weight: 600;
-                  color: #ffffff;
+                  color: $text-primary;
 
                   .exercise-id {
-                    background: #4caf50;
-                    color: #ffffff;
+                    background: $success-color;
+                    color: $text-primary;
                     padding: 0.35rem 0.65rem;
-                    border-radius: 4px;
+                    border-radius: 8px;
                     font-size: 0.65rem;
                     font-weight: 700;
                     min-width: 40px;
                     text-align: center;
+                    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
 
                     &.superset {
-                      background: #ff9800;
+                      background: $accent-orange;
+                      box-shadow: 0 2px 8px rgba(249, 115, 22, 0.3);
                     }
                   }
 
@@ -313,11 +419,11 @@
                 text-align: center;
 
                 .stat-badge {
-                  background: #2196f3;
-                  color: #ffffff;
+                  background: rgba(33, 150, 243, 0.2);
+                  color: #60a5fa;
                   padding: 0.4rem 0.875rem;
-                  border-radius: 4px;
-                  border: 1px solid #1976d2;
+                  border-radius: 8px;
+                  border: 1px solid rgba(33, 150, 243, 0.4);
                   display: inline-block;
                   min-width: 45px;
                   font-weight: 600;
@@ -328,16 +434,16 @@
               &.description-cell {
                 font-size: 0.8rem;
                 line-height: 1.6;
-                color: #999999;
+                color: $text-secondary;
 
                 .description-content {
-                  background: #2a2a2a;
+                  background: rgba(255, 255, 255, 0.05);
                   padding: 1rem;
-                  border-radius: 4px;
-                  border-left: 3px solid #4caf50;
+                  border-radius: 12px;
+                  border-left: 3px solid $success-color;
 
                   strong {
-                    color: #ffffff;
+                    color: $text-primary;
                     display: block;
                     margin-bottom: 0.5rem;
                     font-size: 0.7rem;
@@ -349,7 +455,7 @@
 
                 &.empty {
                   text-align: center;
-                  color: #666666;
+                  color: $text-muted;
                   font-style: italic;
                   padding: 1.75rem;
                 }
@@ -357,28 +463,32 @@
 
               &.actions-cell {
                 text-align: center;
+                display: flex;
+                gap: 8px;
 
+                .delete-exercise-button,
                 .update-exercise-button {
                   font-size: 0.75rem;
                   font-weight: 500;
                   padding: 0.5rem 0.875rem;
-                  border-radius: 4px;
-                  background: #2196f3;
-                  color: #ffffff;
-                  border: 1px solid #1976d2;
-                  transition: all 0.2s ease;
+                  border-radius: 12px;
+                  background: rgba(33, 150, 243, 0.2);
+                  color: #60a5fa;
+                  border: 1px solid rgba(33, 150, 243, 0.4);
+                  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                   cursor: pointer;
                   display: inline-flex;
                   align-items: center;
                   gap: 0.375rem;
-
+                  
                   &:hover {
-                    background: #1976d2;
-                    border-color: #1565c0;
+                    background: rgba(33, 150, 243, 0.3);
+                    border-color: rgba(33, 150, 243, 0.6);
+                    transform: translateY(-2px);
                   }
 
                   &:active {
-                    background: #1565c0;
+                    transform: translateY(0);
                   }
 
                   svg {
@@ -394,6 +504,17 @@
                     }
                   }
                 }
+
+                .delete-exercise-button {
+                  background: rgba(239, 68, 68, 0.2);
+                  color: $danger-light;
+                  border: 1px solid rgba(239, 68, 68, 0.4);
+
+                  &:hover {
+                    background: rgba(239, 68, 68, 0.3);
+                    border-color: rgba(239, 68, 68, 0.6);
+                  }
+                }
               }
             }
           }
@@ -404,11 +525,11 @@
     .no-exercises {
       text-align: center;
       padding: 3.5rem 1.75rem;
-      background: #1a1a1a;
-      border-radius: 8px;
-      color: #999999;
+      @include glass-effect;
+      border-radius: 24px;
+      color: $text-secondary;
       font-size: 1rem;
-      border: 2px dashed #333333;
+      border: 2px dashed rgba(255, 255, 255, 0.1);
       
       p {
         margin: 0;
@@ -423,14 +544,13 @@
       justify-content: center;
       min-height: 60vh;
       text-align: center;
-      background: #1a1a1a;
-      border-radius: 8px;
+      @include glass-effect;
+      border-radius: 24px;
       padding: 3.5rem;
-      border: 1px solid #333333;
 
       h2 {
         font-size: 1.625rem;
-        color: #ffffff;
+        color: $text-primary;
         margin-bottom: 1rem;
         font-weight: 700;
       }
@@ -443,9 +563,12 @@
 
     .workout-header {
       padding: 1.25rem;
+      border-radius: 20px;
     }
 
     .exercise-group {
+      border-radius: 20px;
+
       .exercises-table {
         font-size: 0.75rem;
 
@@ -487,11 +610,11 @@
         }
 
         .exercise-card {
-          background: #2a2a2a;
-          border-radius: 8px;
+          background: rgba(255, 255, 255, 0.05);
+          border-radius: 16px;
           padding: 1.25rem;
           margin-bottom: 0.875rem;
-          border: 1px solid #333333;
+          border: 1px solid rgba(255, 255, 255, 0.1);
 
           .card-header {
             display: flex;
@@ -502,14 +625,14 @@
             .exercise-name {
               font-size: 0.95rem;
               font-weight: 600;
-              color: #ffffff;
+              color: $text-primary;
             }
 
             .exercise-id {
-              background: #4caf50;
-              color: #ffffff;
+              background: $success-color;
+              color: $text-primary;
               padding: 0.25rem 0.65rem;
-              border-radius: 4px;
+              border-radius: 8px;
               font-size: 0.65rem;
               font-weight: 700;
             }
@@ -523,14 +646,14 @@
 
             .stat-item {
               text-align: center;
-              background: #333333;
+              background: rgba(255, 255, 255, 0.05);
               padding: 0.65rem;
-              border-radius: 4px;
-              border: 1px solid #555555;
+              border-radius: 8px;
+              border: 1px solid rgba(255, 255, 255, 0.1);
 
               .label {
                 font-size: 0.65rem;
-                color: #999999;
+                color: $text-muted;
                 text-transform: uppercase;
                 font-weight: 600;
                 letter-spacing: 0.05em;
@@ -539,23 +662,23 @@
               .value {
                 font-size: 1.125rem;
                 font-weight: 700;
-                color: #ffffff;
+                color: $text-primary;
                 margin-top: 0.25rem;
               }
             }
           }
 
           .card-description {
-            background: #1a1a1a;
+            background: rgba(255, 255, 255, 0.05);
             padding: 0.875rem;
-            border-radius: 4px;
-            border-left: 3px solid #4caf50;
+            border-radius: 8px;
+            border-left: 3px solid $success-color;
             font-size: 0.775rem;
-            color: #999999;
+            color: $text-secondary;
             line-height: 1.5;
 
             strong {
-              color: #ffffff;
+              color: $text-primary;
               font-weight: 600;
             }
           }
@@ -573,9 +696,9 @@
 
   // Smooth focus states
   *:focus-visible {
-    outline: 2px solid #4caf50;
+    outline: 2px solid $success-color;
     outline-offset: 2px;
-    border-radius: 4px;
+    border-radius: 8px;
   }
 
   // Scrollbar styling
@@ -584,16 +707,16 @@
   }
 
   ::-webkit-scrollbar-track {
-    background: #1a1a1a;
-    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
   }
 
   ::-webkit-scrollbar-thumb {
-    background: #333333;
-    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
     
     &:hover {
-      background: #555555;
+      background: rgba(255, 255, 255, 0.2);
     }
   }
 }

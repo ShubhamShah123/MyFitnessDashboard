@@ -1,0 +1,520 @@
+// exercise-list.scss - Clean and aesthetic styling
+@import "../../styles/variables.scss";
+
+// Variables (matching user-profile.scss theme)
+$primary-dark: #0a0a0a;
+$secondary-dark: #1a1a1a;
+$card-dark: #111111;
+$border-dark: #2a2a2a;
+$text-primary: #ffffff;
+$text-secondary: #a1a1a1;
+$text-muted: #666666;
+$success-color: #10b981;
+$success-light: #34d399;
+$danger-color: #ef4444;
+$danger-light: #f87171;
+$accent-blue: #3b82f6;
+$accent-purple: #8b5cf6;
+$accent-emerald: #10b981;
+$accent-orange: #f59e0b;
+$accent-cyan: #06b6d4;
+
+// Mixins
+@mixin gradient-bg($color1, $color2, $angle: 135deg) {
+  background: linear-gradient($angle, $color1 0%, $color2 100%);
+}
+
+@mixin glass-effect {
+  backdrop-filter: blur(12px);
+  background: rgba(17, 17, 17, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@mixin card-hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+// Animations
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.ExerciseList {
+  min-height: 100vh;
+  color: $text-primary;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  padding: 40px 20px;
+  position: relative;
+  overflow-x: hidden;
+
+  // Background overlay effect
+  &::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 20% 20%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 60%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .exercise-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  // Hero Header
+  .exercise-header {
+    text-align: center;
+    margin-bottom: 50px;
+    animation: slideInUp 0.8s ease-out;
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 300;
+      color: $text-primary;
+      margin-bottom: 10px;
+      letter-spacing: 1px;
+      
+      &::after {
+        content: "";
+        display: block;
+        width: 80px;
+        height: 3px;
+        @include gradient-bg($accent-emerald, $accent-blue);
+        margin: 15px auto 0;
+        border-radius: 2px;
+      }
+    }
+
+    .subtitle {
+      font-size: 1.1rem;
+      color: $text-secondary;
+      margin-bottom: 30px;
+    }
+
+    .stats-bar {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin-top: 30px;
+
+      .stat-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 20px 30px;
+        @include glass-effect;
+        border-radius: 16px;
+        transition: all 0.3s ease;
+
+        &:hover {
+          transform: translateY(-4px);
+          border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .stat-number {
+          font-size: 2rem;
+          font-weight: 600;
+          @include gradient-bg($accent-emerald, $accent-blue);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          margin-bottom: 5px;
+        }
+
+        .stat-label {
+          font-size: 0.9rem;
+          color: $text-muted;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+      }
+    }
+  }
+
+  // Category Sections
+  .exercise-category {
+    margin-bottom: 50px;
+    animation: slideInUp 0.8s ease-out both;
+
+    &:nth-child(2) { animation-delay: 0.1s; }
+    &:nth-child(3) { animation-delay: 0.2s; }
+    &:nth-child(4) { animation-delay: 0.3s; }
+    &:nth-child(5) { animation-delay: 0.4s; }
+
+    .category-header {
+      margin-bottom: 25px;
+      position: relative;
+
+      .category-badge {
+        display: flex;
+        align-items: center;
+        padding-bottom: 15px;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        position: relative;
+
+        &::after {
+          content: '';
+          position: absolute;
+          bottom: -2px;
+          left: 0;
+          width: 60px;
+          height: 2px;
+          @include gradient-bg($accent-emerald, $accent-blue);
+        }
+
+        .category-icon {
+          width: 50px;
+          height: 50px;
+          border-radius: 12px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-right: 20px;
+          font-size: 1.5rem;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+          transition: all 0.3s ease;
+
+          &:hover {
+            transform: scale(1.1) rotate(5deg);
+          }
+
+          &.abs {
+            @include gradient-bg($accent-emerald, $success-light);
+          }
+
+          &.cardio {
+            @include gradient-bg($accent-blue, $accent-cyan);
+          }
+
+          &.back-biceps {
+            @include gradient-bg($accent-purple, $accent-blue);
+          }
+
+          &.chest-triceps {
+            @include gradient-bg($accent-orange, $danger-light);
+          }
+
+          &.legs-shoulders {
+            @include gradient-bg($accent-cyan, $accent-purple);
+          }
+        }
+
+        h2 {
+          margin: 0;
+          font-size: 1.8rem;
+          font-weight: 400;
+          color: $text-primary;
+          letter-spacing: 0.5px;
+          flex: 1;
+        }
+
+        .exercise-count {
+          padding: 8px 16px;
+          background: rgba(255, 255, 255, 0.1);
+          border-radius: 20px;
+          font-size: 0.9rem;
+          color: $text-secondary;
+          font-weight: 500;
+          border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+      }
+    }
+  }
+
+  // Exercise Grid (Card Layout)
+  .exercise-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+
+    .exercise-card {
+      @include glass-effect;
+      border-radius: 16px;
+      padding: 20px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      animation: fadeIn 0.5s ease-out both;
+      cursor: pointer;
+
+      @for $i from 1 through 20 {
+        &:nth-child(#{$i}) {
+          animation-delay: #{$i * 0.03}s;
+        }
+      }
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        @include gradient-bg($accent-emerald, $accent-blue);
+      }
+
+      &:hover {
+        @include card-hover;
+        border-color: rgba(255, 255, 255, 0.2);
+
+        .exercise-number {
+          transform: scale(1.1);
+        }
+      }
+
+      .exercise-number {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 35px;
+        height: 35px;
+        border-radius: 8px;
+        @include gradient-bg($accent-emerald, $accent-blue);
+        font-weight: 600;
+        font-size: 0.9rem;
+        margin-bottom: 12px;
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        transition: transform 0.3s ease;
+      }
+
+      .exercise-name {
+        font-size: 1rem;
+        color: $text-primary;
+        font-weight: 400;
+        line-height: 1.5;
+        margin: 0;
+      }
+    }
+  }
+
+  // Loading state
+  .loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 50vh;
+    position: relative;
+    z-index: 1;
+
+    .loading-spinner {
+      width: 50px;
+      height: 50px;
+      border: 3px solid rgba(16, 185, 129, 0.3);
+      border-top: 3px solid $success-color;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+
+    p {
+      color: $text-secondary;
+      font-size: 1.1rem;
+      animation: pulse 2s ease-in-out infinite;
+    }
+  }
+
+  // Error state
+  .error-container {
+    text-align: center;
+    padding: 50px 20px;
+    position: relative;
+    z-index: 1;
+    animation: slideInUp 0.8s ease-out;
+
+    .error-icon {
+      font-size: 4rem;
+      margin-bottom: 20px;
+      opacity: 0.7;
+    }
+
+    h2 {
+      color: $danger-light;
+      margin-bottom: 15px;
+      font-size: 2rem;
+      font-weight: 400;
+    }
+
+    p {
+      color: $text-secondary;
+      font-size: 1.1rem;
+    }
+  }
+
+  // Empty state
+  .empty-state {
+    text-align: center;
+    padding: 80px 20px;
+    animation: fadeIn 0.8s ease-out;
+
+    .empty-icon {
+      font-size: 4rem;
+      margin-bottom: 20px;
+      opacity: 0.5;
+    }
+
+    h3 {
+      color: $text-secondary;
+      font-size: 1.5rem;
+      font-weight: 400;
+      margin-bottom: 10px;
+    }
+
+    p {
+      color: $text-muted;
+      font-size: 1rem;
+    }
+  }
+
+  // Responsive design
+  @media (max-width: 1024px) {
+    .exercise-grid {
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 18px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    padding: 20px 15px;
+
+    .exercise-header {
+      margin-bottom: 40px;
+
+      h1 {
+        font-size: 2rem;
+      }
+
+      .subtitle {
+        font-size: 1rem;
+      }
+
+      .stats-bar {
+        flex-direction: column;
+        gap: 15px;
+        align-items: stretch;
+
+        .stat-item {
+          padding: 15px 20px;
+        }
+      }
+    }
+
+    .exercise-category {
+      margin-bottom: 35px;
+
+      .category-header .category-badge {
+        .category-icon {
+          width: 45px;
+          height: 45px;
+          font-size: 1.3rem;
+          margin-right: 15px;
+        }
+
+        h2 {
+          font-size: 1.5rem;
+        }
+      }
+    }
+
+    .exercise-grid {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    padding: 15px 10px;
+
+    .exercise-header {
+      h1 {
+        font-size: 1.75rem;
+        margin-bottom: 8px;
+      }
+
+      .subtitle {
+        font-size: 0.95rem;
+      }
+
+      .stats-bar .stat-item {
+        padding: 12px 16px;
+
+        .stat-number {
+          font-size: 1.5rem;
+        }
+
+        .stat-label {
+          font-size: 0.8rem;
+        }
+      }
+    }
+
+    .exercise-category .category-header .category-badge {
+      .category-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+        margin-right: 12px;
+      }
+
+      h2 {
+        font-size: 1.3rem;
+      }
+
+      .exercise-count {
+        padding: 6px 12px;
+        font-size: 0.85rem;
+      }
+    }
+
+    .exercise-grid .exercise-card {
+      padding: 16px;
+
+      .exercise-number {
+        width: 30px;
+        height: 30px;
+        font-size: 0.85rem;
+        margin-bottom: 10px;
+      }
+
+      .exercise-name {
+        font-size: 0.95rem;
+      }
+    }
+  }
+}

@@ -38,7 +38,7 @@ const MealsSchedule = () => {
   const handleCardClick = (id: number) => {
     console.log("Clicked meal plan ID:", id);
     // Navigate to the meal detail page with the id
-    navigate(`/MealsDetail/${id}`);
+    navigate(`/dashboard/MealsDetail/${id}`);
   };
 
   const getMealTypeIcon = (type: string) => {

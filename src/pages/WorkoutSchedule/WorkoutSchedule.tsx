@@ -32,8 +32,15 @@ const WorkoutSchedule = () => {
   const handleCardClick = (id: string) => {
     console.log("Clicked card ID:", id);
     // Navigate to the workout detail page with the id
-    navigate(`/WorkoutDetail/${id}`);
+    navigate(`/dashboard/WorkoutDetail/${id}`);
   };
+
+  // const handleCard = (day: never, exercise: never, id: never, key: never) => {
+  //   console.log("Day: ", day)
+  //   console.log("Exercise: ", exercise)
+  //   console.log("Id: ", id)
+  //   console.log("Key: ", key)
+  // }
 
   return (
     <div className="WorkoutSchedule">
@@ -45,6 +52,7 @@ const WorkoutSchedule = () => {
             className="day-card"
             key={id}
             onClick={() => handleCardClick(key)}
+            // onClick = {() => handleCard(day, exercise, id, key)}
           >
             <div className="day-name">{day}</div>
             <div className="exercise-text">{exercise}</div>

@@ -1,5 +1,4 @@
 import "./topBox.scss";
-import { topDealUsers } from "../../data";
 import { useEffect, useState } from "react";
 import { testGetRecentWorkouts } from "../../url";
 

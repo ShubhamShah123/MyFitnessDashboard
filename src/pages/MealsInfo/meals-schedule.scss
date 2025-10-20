@@ -1,188 +1,414 @@
-// meals-schedule.scss
-$bg-dark: #121212;
-$card-bg: #1e1e1e;
-$primary: #81c784; // green for healthy meals
-$secondary: #ffb74d; // orange for high-carb
-$tertiary: #64b5f6; // blue for low-carb
-$accent: #f48fb1; // pink accent
-$text-primary: #e0e0e0;
-$text-muted: #b0bec5;
-$shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+// meals-schedule.scss with workout-schedule.scss theming
+@import "../../styles/variables.scss";
+
+// Variables (matching home.scss theme)
+$primary-dark: #0a0a0a;
+$secondary-dark: #1a1a1a;
+$card-dark: #111111;
+$border-dark: #2a2a2a;
+$text-primary: #ffffff;
+$text-secondary: #a1a1a1;
+$text-muted: #666666;
+$success-color: #10b981;
+$success-light: #34d399;
+$danger-color: #ef4444;
+$danger-light: #f87171;
+$accent-blue: #3b82f6;
+$accent-purple: #8b5cf6;
+$accent-emerald: #10b981;
+$accent-orange: #f97316;
+$accent-pink: #ec4899;
+
+// Mixins
+@mixin gradient-bg($color1, $color2, $angle: 135deg) {
+  background: linear-gradient($angle, $color1 0%, $color2 100%);
+}
+
+@mixin glass-effect {
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@mixin card-hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+@mixin button-hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 15px 35px rgba(16, 185, 129, 0.4);
+}
+
+// Animations
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
 
 .MealsSchedule {
-    background-color: $bg-dark;
+  min-height: 100vh;
+  color: $text-primary;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  padding: 20px 20px;
+  position: relative;
+  overflow-x: hidden;
+
+  // Background overlay effect (matching home.scss)
+  &::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 20% 20%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 60%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  h1 {
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: 300;
     color: $text-primary;
-    min-height: 100vh;
-    padding: 40px 20px;
-    font-family: "Roboto", sans-serif;
+    margin-bottom: 30px;
+    letter-spacing: 1px;
+    position: relative;
+    z-index: 1;
+    animation: slideInUp 0.8s ease-out;
+    
+    &::after {
+      content: "";
+      display: block;
+      width: 80px;
+      height: 3px;
+      @include gradient-bg($accent-emerald, $accent-blue);
+      margin: 15px auto 0;
+      border-radius: 2px;
+    }
+  }
 
-    h1 {
-        text-align: center;
-        font-size: 2.5rem;
-        font-weight: 300;
-        color: white;
-        margin-bottom: 50px;
-        letter-spacing: 1px;
-        
-        &::after {
-            content: "";
-            display: block;
-            width: 80px;
-            height: 3px;
-            background: linear-gradient(90deg, $primary, $secondary);
-            margin: 15px auto 0;
-            border-radius: 2px;
-        }
+  .schedule-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-auto-rows: 200px;
+    gap: 20px;
+    padding: 0 10px;
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .day-card {
+    @include glass-effect;
+    cursor: pointer;
+    border-radius: 24px;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    animation: slideInUp 0.8s ease-out;
+    animation-fill-mode: both;
+
+    // Top gradient border
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      @include gradient-bg($accent-emerald, $accent-blue);
+      z-index: 1;
+      opacity: 0;
+      transition: opacity 0.3s ease;
     }
 
-    .schedule-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        grid-auto-rows: 200px;
-        gap: 25px;
-        padding: 0 10px;
-        max-width: 1200px;
-        margin: 0 auto;
+    // Shimmer effect
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      transition: left 0.6s ease;
+      pointer-events: none;
+      z-index: 2;
     }
 
-    .day-card {
-        background: linear-gradient(135deg, #1e1e1e 0%, #2a2a2a 100%);
-        cursor: pointer;
-        border-radius: 20px;
-        padding: 30px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        transition: all 0.3s ease;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        position: relative;
-        overflow: hidden;
+    &:hover {
+      @include card-hover;
+      border-color: rgba(255, 255, 255, 0.2);
+      
+      &::before {
+        opacity: 1;
+      }
 
-        &::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, $primary, $secondary);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
+      &::after {
+        left: 100%;
+      }
 
-        &:hover {
-            transform: translateY(-8px);
-            box-shadow: $shadow;
-            border-color: rgba(255, 255, 255, 0.2);
-            
-            &::before {
-                opacity: 1;
-            }
-        }
-
-        // Different accent colors based on meal type
-        &:has(.meal-type:contains("Low-Carb")) {
-            &::before {
-                background: linear-gradient(90deg, $tertiary, #42a5f5);
-            }
-        }
-
-        &:has(.meal-type:contains("High-Carb")) {
-            &::before {
-                background: linear-gradient(90deg, $secondary, #ffa726);
-            }
-        }
-
-        .day-name {
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: $primary;
-            margin-bottom: 15px;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .meal-type {
-            font-size: 1.1rem;
-            font-weight: 500;
-            margin-bottom: 10px;
-            padding: 8px 16px;
-            border-radius: 20px;
-            text-align: center;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            
-            &:contains("Low-Carb") {
-                background-color: rgba($tertiary, 0.2);
-                color: $tertiary;
-                border: 1px solid rgba($tertiary, 0.3);
-            }
-            
-            &:contains("High-Carb") {
-                background-color: rgba($secondary, 0.2);
-                color: $secondary;
-                border: 1px solid rgba($secondary, 0.3);
-            }
-        }
-
-        .meal-count {
-            font-size: 0.95rem;
-            color: $text-muted;
-            font-weight: 400;
-            text-align: center;
-            opacity: 0.8;
-        }
+      .day-name {
+        transform: translateX(4px);
+      }
     }
 
-    // Override for specific meal types using attribute selectors
-    .day-card {
-        &[data-meal-type="Low-Carb"] {
-            .meal-type {
-                background-color: rgba($tertiary, 0.2);
-                color: $tertiary;
-                border: 1px solid rgba($tertiary, 0.3);
-            }
-            
-            &::before {
-                background: linear-gradient(90deg, $tertiary, #42a5f5);
-            }
-        }
-        
-        &[data-meal-type="High-Carb"] {
-            .meal-type {
-                background-color: rgba($secondary, 0.2);
-                color: $secondary;
-                border: 1px solid rgba($secondary, 0.3);
-            }
-            
-            &::before {
-                background: linear-gradient(90deg, $secondary, #ffa726);
-            }
-        }
+    // Staggered animation delays
+    @for $i from 1 through 7 {
+      &:nth-child(#{$i}) {
+        animation-delay: #{$i * 0.1}s;
+      }
     }
+
+    // Cycling through different gradient colors for variety
+    &:nth-child(7n+1) {
+      &::before {
+        @include gradient-bg($accent-emerald, $success-light);
+      }
+      .day-name {
+        color: $success-light;
+      }
+    }
+
+    &:nth-child(7n+2) {
+      &::before {
+        @include gradient-bg($accent-orange, #fb923c);
+      }
+      .day-name {
+        color: #fb923c;
+      }
+    }
+
+    &:nth-child(7n+3) {
+      &::before {
+        @include gradient-bg($accent-blue, #60a5fa);
+      }
+      .day-name {
+        color: #60a5fa;
+      }
+    }
+
+    &:nth-child(7n+4) {
+      &::before {
+        @include gradient-bg($accent-purple, #a78bfa);
+      }
+      .day-name {
+        color: #a78bfa;
+      }
+    }
+
+    &:nth-child(7n+5) {
+      &::before {
+        @include gradient-bg($accent-pink, #f472b6);
+      }
+      .day-name {
+        color: #f472b6;
+      }
+    }
+
+    &:nth-child(7n+6) {
+      &::before {
+        @include gradient-bg(#14b8a6, #2dd4bf);
+      }
+      .day-name {
+        color: #2dd4bf;
+      }
+    }
+
+    &:nth-child(7n) {
+      &::before {
+        @include gradient-bg(#eab308, #fbbf24);
+      }
+      .day-name {
+        color: #fbbf24;
+      }
+    }
+
+    .day-name {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 15px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+      z-index: 3;
+      transition: all 0.3s ease;
+
+      > :first-child {
+        font-size: 1.2rem;
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+      }
+    }
+
+    .meal-type {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+      padding: 8px 16px;
+      border-radius: 20px;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      position: relative;
+      z-index: 3;
+      transition: all 0.3s ease;
+    }
+
+    .meal-count {
+      font-size: 1rem;
+      font-weight: 400;
+      color: $text-secondary;
+      line-height: 1.6;
+      text-align: center;
+      opacity: 0.9;
+      position: relative;
+      z-index: 3;
+    }
+
+    // Meal type specific styling - Low-Carb
+    &[data-meal-type="Low-Carb"] {
+      .meal-type {
+        background: rgba(59, 130, 246, 0.2);
+        color: #60a5fa;
+        border: 1px solid rgba(59, 130, 246, 0.4);
+      }
+      
+      &::before {
+        @include gradient-bg($accent-blue, #60a5fa);
+      }
+
+      .day-name {
+        color: #60a5fa;
+      }
+    }
+
+    // Meal type specific styling - High-Carb
+    &[data-meal-type="High-Carb"] {
+      .meal-type {
+        background: rgba(249, 115, 22, 0.2);
+        color: #fb923c;
+        border: 1px solid rgba(249, 115, 22, 0.4);
+      }
+      
+      &::before {
+        @include gradient-bg($accent-orange, #fb923c);
+      }
+
+      .day-name {
+        color: #fb923c;
+      }
+    }
+
+    // Default fallback colors for other meal types
+    &:not([data-meal-type="Low-Carb"]):not([data-meal-type="High-Carb"]) {
+      .meal-type {
+        background: rgba(16, 185, 129, 0.2);
+        color: $success-light;
+        border: 1px solid rgba(16, 185, 129, 0.4);
+      }
+
+      &::before {
+        @include gradient-bg($accent-emerald, $success-light);
+      }
+    }
+  }
 }
 
 // Responsive design
-@media (max-width: 768px) {
-    .MealsSchedule {
-        padding: 20px 15px;
-        
-        h1 {
-            font-size: 2rem;
-            margin-bottom: 30px;
-        }
-        
-        .schedule-grid {
-            grid-template-columns: 1fr;
-            gap: 20px;
-        }
-        
-        .day-card {
-            padding: 25px;
-            grid-auto-rows: 180px;
-        }
+@media (max-width: 1200px) {
+  .MealsSchedule {
+    .schedule-grid {
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 16px;
     }
+  }
+}
+
+@media (max-width: 768px) {
+  .MealsSchedule {
+    padding: 20px 15px;
+    
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 30px;
+    }
+    
+    .schedule-grid {
+      grid-template-columns: 1fr;
+      gap: 16px;
+      grid-auto-rows: 180px;
+    }
+    
+    .day-card {
+      padding: 25px;
+      border-radius: 20px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .MealsSchedule {
+    padding: 15px 10px;
+
+    h1 {
+      font-size: 1.75rem;
+      margin-bottom: 25px;
+    }
+
+    .schedule-grid {
+      gap: 12px;
+      grid-auto-rows: 160px;
+    }
+
+    .day-card {
+      padding: 20px;
+      border-radius: 16px;
+
+      .day-name {
+        font-size: 1.1rem;
+        margin-bottom: 12px;
+      }
+
+      .meal-type {
+        font-size: 0.9rem;
+        padding: 6px 12px;
+      }
+
+      .meal-count {
+        font-size: 0.9rem;
+      }
+    }
+  }
 }

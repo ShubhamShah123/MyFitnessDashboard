@@ -1,29 +1,76 @@
-// Variables - Dark Mode Theme (Black Shades)
-$primary-color: #1a1a1a;
-$secondary-color: #2d2d2d;
-$success-color: #34d399;
-$warning-color: #fbbf24;
-$danger-color: #f87171;
-$background-color: #000000;
-$card-background: #0d0d0d;
-$text-primary: #f8fafc;
-$text-secondary: #94a3b8;
-$border-color: #1f1f1f;
-$shadow-light: 0 1px 3px 0 rgba(0, 0, 0, 0.5), 0 1px 2px 0 rgba(0, 0, 0, 0.4);
-$shadow-medium: 0 4px 6px -1px rgba(0, 0, 0, 0.6), 0 2px 4px -1px rgba(0, 0, 0, 0.5);
-$shadow-large: 0 10px 15px -3px rgba(0, 0, 0, 0.7), 0 4px 6px -2px rgba(0, 0, 0, 0.6);
-$border-radius: 12px;
-$border-radius-lg: 16px;
+// progress-weeks.scss with consistent theming
+@import "../../styles/variables.scss";
+
+// Variables (matching theme)
+$primary-dark: #0a0a0a;
+$secondary-dark: #1a1a1a;
+$card-dark: #111111;
+$border-dark: #2a2a2a;
+$text-primary: #ffffff;
+$text-secondary: #a1a1a1;
+$text-muted: #666666;
+$success-color: #10b981;
+$success-light: #34d399;
+$danger-color: #ef4444;
+$danger-light: #f87171;
+$accent-blue: #3b82f6;
+$accent-purple: #8b5cf6;
+$accent-emerald: #10b981;
+$accent-orange: #f97316;
+$accent-yellow: #eab308;
 
 // Mixins
-@mixin gradient-bg($color1, $color2) {
-  background: linear-gradient(135deg, $color1 0%, $color2 100%);
+@mixin gradient-bg($color1, $color2, $angle: 135deg) {
+  background: linear-gradient($angle, $color1 0%, $color2 100%);
 }
 
-@mixin glassmorphism {
-  background: rgba(13, 13, 13, 0.4);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(31, 31, 31, 0.3);
+@mixin glass-effect {
+  backdrop-filter: blur(12px);
+  background: rgba(17, 17, 17, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@mixin card-hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+// Animations
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes expandDetails {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
 }
 
 // Main container
@@ -31,24 +78,51 @@ $border-radius-lg: 16px;
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
-  background: $background-color;
   min-height: 100vh;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  position: relative;
+  overflow-x: hidden;
+  color: $text-primary;
+
+  // Background overlay effect
+  &::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 20% 20%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 60%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
 
   // Header
   .progress-header {
     text-align: center;
     margin-bottom: 3rem;
+    position: relative;
+    z-index: 1;
+    animation: slideInUp 0.8s ease-out;
     
     h1 {
       font-size: 2.5rem;
       font-weight: 700;
-      @include gradient-bg($primary-color, $secondary-color);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: $text-secondary;
-      background-clip: text;
+      color: $text-primary;
       margin-bottom: 0.5rem;
       line-height: 1.2;
+      
+      &::after {
+        content: "";
+        display: block;
+        width: 80px;
+        height: 3px;
+        @include gradient-bg($accent-emerald, $accent-blue);
+        margin: 15px auto 0;
+        border-radius: 2px;
+      }
     }
 
     .subtitle {
@@ -61,6 +135,8 @@ $border-radius-lg: 16px;
   // Stats summary
   .weeks-overview {
     margin-bottom: 2rem;
+    position: relative;
+    z-index: 1;
 
     .stats-summary {
       display: grid;
@@ -69,19 +145,20 @@ $border-radius-lg: 16px;
       margin-bottom: 2rem;
 
       .stat-card {
-        background: $card-background;
+        @include glass-effect;
         padding: 2rem;
-        border-radius: $border-radius-lg;
-        box-shadow: $shadow-medium;
+        border-radius: 24px;
         text-align: center;
         position: relative;
         overflow: hidden;
-        border: 1px solid $border-color;
-        transition: all 0.3s ease;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        animation: slideInUp 0.8s ease-out;
+        animation-fill-mode: both;
 
-        &:hover {
-          transform: translateY(-2px);
-          box-shadow: $shadow-large;
+        @for $i from 1 through 4 {
+          &:nth-child(#{$i}) {
+            animation-delay: #{$i * 0.1}s;
+          }
         }
 
         &::before {
@@ -90,8 +167,14 @@ $border-radius-lg: 16px;
           top: 0;
           left: 0;
           right: 0;
-          height: 4px;
-          @include gradient-bg($primary-color, $secondary-color);
+          height: 3px;
+          background: linear-gradient(90deg, $accent-emerald, $accent-blue, $accent-purple, $accent-emerald);
+          background-size: 200% 100%;
+          animation: gradientShift 3s ease infinite;
+        }
+
+        &:hover {
+          @include card-hover;
         }
 
         .stat-value {
@@ -103,11 +186,11 @@ $border-radius-lg: 16px;
         }
 
         .stat-label {
-          font-size: 0.875rem;
+          font-size: 0.75rem;
           color: $text-secondary;
-          font-weight: 500;
+          font-weight: 600;
           text-transform: uppercase;
-          letter-spacing: 0.025em;
+          letter-spacing: 0.05em;
         }
       }
     }
@@ -120,20 +203,24 @@ $border-radius-lg: 16px;
     align-items: center;
     justify-content: center;
     min-height: 400px;
+    position: relative;
+    z-index: 1;
     
     .loading-spinner {
-      width: 40px;
-      height: 40px;
-      border: 3px solid $border-color;
-      border-top: 3px solid $primary-color;
+      width: 50px;
+      height: 50px;
+      border: 3px solid rgba(16, 185, 129, 0.3);
+      border-top: 3px solid $success-color;
       border-radius: 50%;
       animation: spin 1s linear infinite;
       margin-bottom: 1rem;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
     }
 
     p {
       color: $text-secondary;
-      font-size: 1.125rem;
+      font-size: 1.1rem;
+      animation: pulse 2s ease-in-out infinite;
     }
   }
 
@@ -141,15 +228,17 @@ $border-radius-lg: 16px;
   .error-container {
     text-align: center;
     padding: 3rem;
-    background: $card-background;
-    border-radius: $border-radius-lg;
-    box-shadow: $shadow-medium;
-    border: 1px solid $border-color;
+    @include glass-effect;
+    border-radius: 24px;
+    position: relative;
+    z-index: 1;
+    animation: slideInUp 0.8s ease-out;
 
     h3 {
-      color: $danger-color;
+      color: $danger-light;
       margin-bottom: 1rem;
       font-size: 1.5rem;
+      font-weight: 700;
     }
 
     p {
@@ -158,18 +247,23 @@ $border-radius-lg: 16px;
     }
 
     .retry-btn {
-      background: $primary-color;
-      color: white;
+      @include gradient-bg($accent-emerald, $success-light);
+      color: $text-primary;
       border: none;
-      padding: 0.75rem 2rem;
-      border-radius: $border-radius;
+      padding: 0.875rem 2rem;
+      border-radius: 25px;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
 
       &:hover {
-        background: darken($primary-color, 10%);
-        transform: translateY(-1px);
+        transform: translateY(-2px) scale(1.02);
+        box-shadow: 0 15px 35px rgba(16, 185, 129, 0.4);
+      }
+
+      &:active {
+        transform: translateY(0) scale(0.98);
       }
     }
   }
@@ -180,6 +274,10 @@ $border-radius-lg: 16px;
     padding: 3rem;
     color: $text-secondary;
     font-size: 1.125rem;
+    position: relative;
+    z-index: 1;
+    @include glass-effect;
+    border-radius: 24px;
   }
 
   // Weeks grid
@@ -187,29 +285,23 @@ $border-radius-lg: 16px;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
     gap: 2rem;
+    position: relative;
+    z-index: 1;
 
     .week-card {
-      background: $card-background;
-      border-radius: $border-radius-lg;
+      @include glass-effect;
+      border-radius: 24px;
       padding: 1.5rem;
-      box-shadow: $shadow-medium;
-      border: 1px solid $border-color;
-      transition: all 0.3s ease;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       cursor: pointer;
       position: relative;
       overflow: hidden;
+      animation: slideInUp 0.8s ease-out;
+      animation-fill-mode: both;
 
-      &:hover {
-        transform: translateY(-4px);
-        box-shadow: $shadow-large;
-      }
-
-      &.selected {
-        border-color: $secondary-color;
-        box-shadow: 0 0 0 3px rgba($secondary-color, 0.2), $shadow-large;
-        
-        .week-header h3 {
-          color: $text-primary;
+      @for $i from 1 through 12 {
+        &:nth-child(#{$i}) {
+          animation-delay: #{$i * 0.05}s;
         }
       }
 
@@ -220,11 +312,54 @@ $border-radius-lg: 16px;
         left: 0;
         right: 0;
         height: 3px;
-        @include gradient-bg($primary-color, $secondary-color);
+        @include gradient-bg($accent-emerald, $accent-blue);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+        transition: left 0.6s ease;
+        pointer-events: none;
+        z-index: 2;
+      }
+
+      &:hover {
+        @include card-hover;
+        border-color: rgba(255, 255, 255, 0.2);
+
+        &::before {
+          opacity: 1;
+        }
+
+        &::after {
+          left: 100%;
+        }
+      }
+
+      &.selected {
+        border-color: rgba(16, 185, 129, 0.4);
+        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2), 0 20px 40px rgba(0, 0, 0, 0.4);
+        
+        &::before {
+          opacity: 1;
+        }
+        
+        .week-header h3 {
+          color: $success-light;
+        }
       }
 
       .week-header {
         margin-bottom: 1.5rem;
+        position: relative;
+        z-index: 3;
         
         h3 {
           font-size: 1.5rem;
@@ -245,15 +380,17 @@ $border-radius-lg: 16px;
         display: flex;
         flex-direction: column;
         gap: 1rem;
+        position: relative;
+        z-index: 3;
 
         .metric {
           .metric-label {
-            font-size: 0.875rem;
+            font-size: 0.75rem;
             color: $text-secondary;
             font-weight: 600;
             margin-bottom: 0.5rem;
             text-transform: uppercase;
-            letter-spacing: 0.025em;
+            letter-spacing: 0.05em;
           }
 
           .metric-value {
@@ -264,7 +401,7 @@ $border-radius-lg: 16px;
             .progress-bar {
               flex: 1;
               height: 8px;
-              background: $border-color;
+              background: rgba(255, 255, 255, 0.1);
               border-radius: 10px;
               overflow: hidden;
               position: relative;
@@ -272,15 +409,15 @@ $border-radius-lg: 16px;
               .progress-fill {
                 height: 100%;
                 border-radius: 10px;
-                // transition: width 0.6s ease;
                 position: relative;
+                transition: width 0.6s ease;
 
                 &.workout-progress {
-                  @include gradient-bg($success-color, lighten($success-color, 10%));
+                  @include gradient-bg($success-color, $success-light);
                 }
 
                 &.meal-progress {
-                  @include gradient-bg($warning-color, lighten($warning-color, 10%));
+                  @include gradient-bg($accent-yellow, #fbbf24);
                 }
               }
             }
@@ -302,11 +439,11 @@ $border-radius-lg: 16px;
                 font-size: 1.25rem;
                 
                 &.increasing {
-                  color: $danger-color;
+                  color: $danger-light;
                 }
                 
                 &.decreasing {
-                  color: $success-color;
+                  color: $success-light;
                 }
                 
                 &.stable {
@@ -322,8 +459,10 @@ $border-radius-lg: 16px;
       .week-details {
         margin-top: 2rem;
         padding-top: 2rem;
-        border-top: 1px solid $border-color;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
         animation: expandDetails 0.3s ease-out;
+        position: relative;
+        z-index: 3;
 
         .details-grid {
           display: grid;
@@ -333,12 +472,23 @@ $border-radius-lg: 16px;
 
           .detail-section {
             h4 {
-              font-size: 1rem;
+              font-size: 0.75rem;
               font-weight: 700;
               color: $text-primary;
               margin-bottom: 1rem;
               text-transform: uppercase;
-              letter-spacing: 0.025em;
+              letter-spacing: 0.05em;
+              display: flex;
+              align-items: center;
+              gap: 8px;
+
+              &::before {
+                content: '';
+                width: 4px;
+                height: 16px;
+                background: $accent-emerald;
+                border-radius: 2px;
+              }
             }
 
             .meal-stats {
@@ -350,11 +500,17 @@ $border-radius-lg: 16px;
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                padding: 0.5rem;
-                background: rgba(0, 0, 0, 0.8);
-                border-radius: $border-radius;
+                padding: 0.75rem;
+                background: rgba(255, 255, 255, 0.05);
+                border-radius: 12px;
                 font-size: 0.875rem;
-                border: 1px solid rgba(31, 31, 31, 0.8);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                transition: all 0.3s ease;
+
+                &:hover {
+                  background: rgba(255, 255, 255, 0.08);
+                  transform: translateX(4px);
+                }
 
                 span:first-child {
                   color: $text-secondary;
@@ -374,13 +530,19 @@ $border-radius-lg: 16px;
               gap: 0.5rem;
 
               .weight-reading {
-                background: rgba(0, 0, 0, 0.8);
+                background: rgba(255, 255, 255, 0.05);
                 padding: 0.5rem 1rem;
-                border-radius: $border-radius;
+                border-radius: 12px;
                 font-size: 0.875rem;
                 font-weight: 600;
                 color: $text-primary;
-                border: 1px solid rgba(31, 31, 31, 0.8);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                transition: all 0.3s ease;
+
+                &:hover {
+                  background: rgba(255, 255, 255, 0.08);
+                  transform: scale(1.05);
+                }
               }
             }
           }
@@ -388,12 +550,23 @@ $border-radius-lg: 16px;
 
         .daily-entries {
           h4 {
-            font-size: 1rem;
+            font-size: 0.75rem;
             font-weight: 700;
             color: $text-primary;
             margin-bottom: 1rem;
             text-transform: uppercase;
-            letter-spacing: 0.025em;
+            letter-spacing: 0.05em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            &::before {
+              content: '';
+              width: 4px;
+              height: 16px;
+              background: $accent-emerald;
+              border-radius: 2px;
+            }
           }
 
           .entries-list {
@@ -406,13 +579,20 @@ $border-radius-lg: 16px;
               justify-content: space-between;
               align-items: center;
               padding: 1rem;
-              background: rgba(0, 0, 0, 0.8);
-              border-radius: $border-radius;
-              border: 1px solid rgba(31, 31, 31, 0.8);
+              background: rgba(255, 255, 255, 0.05);
+              border-radius: 12px;
+              border: 1px solid rgba(255, 255, 255, 0.1);
+              transition: all 0.3s ease;
+
+              &:hover {
+                background: rgba(255, 255, 255, 0.08);
+                transform: translateX(4px);
+              }
 
               .entry-date {
                 font-weight: 600;
                 color: $text-primary;
+                font-size: 0.875rem;
               }
 
               .entry-status {
@@ -422,31 +602,31 @@ $border-radius-lg: 16px;
 
                 .status-badge {
                   padding: 0.25rem 0.75rem;
-                  border-radius: 20px;
-                  font-size: 0.75rem;
+                  border-radius: 12px;
+                  font-size: 0.7rem;
                   font-weight: 600;
                   
                   &.completed {
-                    background: rgba($success-color, 0.1);
-                    color: $success-color;
-                    border: 1px solid rgba($success-color, 0.2);
+                    background: rgba(16, 185, 129, 0.2);
+                    color: $success-light;
+                    border: 1px solid rgba(16, 185, 129, 0.4);
                   }
                   
                   &.missed {
-                    background: rgba($danger-color, 0.1);
-                    color: $danger-color;
-                    border: 1px solid rgba($danger-color, 0.2);
+                    background: rgba(239, 68, 68, 0.2);
+                    color: $danger-light;
+                    border: 1px solid rgba(239, 68, 68, 0.4);
                   }
                 }
 
                 .weight-badge {
-                  background: rgba($secondary-color, 0.2);
-                  color: $text-primary;
+                  background: rgba(59, 130, 246, 0.2);
+                  color: #60a5fa;
                   padding: 0.25rem 0.75rem;
-                  border-radius: 20px;
-                  font-size: 0.75rem;
+                  border-radius: 12px;
+                  font-size: 0.7rem;
                   font-weight: 600;
-                  border: 1px solid rgba($secondary-color, 0.3);
+                  border: 1px solid rgba(59, 130, 246, 0.4);
                 }
               }
             }
@@ -454,28 +634,6 @@ $border-radius-lg: 16px;
         }
       }
     }
-  }
-}
-
-// Animations
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-@keyframes shimmer {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
-}
-
-@keyframes expandDetails {
-  0% {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
   }
 }
 
@@ -503,6 +661,7 @@ $border-radius-lg: 16px;
 
       .week-card {
         padding: 1.25rem;
+        border-radius: 20px;
 
         .week-details .details-grid {
           grid-template-columns: 1fr;
@@ -523,10 +682,30 @@ $border-radius-lg: 16px;
 
     .weeks-grid .week-card {
       padding: 1rem;
+      border-radius: 16px;
 
       .week-header h3 {
         font-size: 1.25rem;
       }
     }
+  }
+}
+
+// Scrollbar styling
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.2);
   }
 }

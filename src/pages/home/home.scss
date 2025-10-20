@@ -61,7 +61,7 @@ $accent-emerald: #10b981;
 
 .home {
   min-height: 100vh;
-  @include gradient-bg($primary-dark, #000000);
+  // @include gradient-bg($primary-dark, #000000);
   color: $text-primary;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   position: relative;

@@ -8,15 +8,24 @@ import { testGetWeights } from "../../url";
 const Home = () => {
   const [monthlyData, setMonthlyData] = useState([]);
   const [weeklyData, setWeeklyData] = useState([]);
-
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
         const res = await fetch(testGetWeights);
         const result = await res.json();
+        console.log("MOnth Result: ",result)
         const formattedData = result.monthly.map((item) => {
-          const date = new Date(item.month + "-01");
-          const monthLabel = date.toLocaleString("default", { month: "short" }); // e.g., "Feb"
+          console.log("Item: ", item)
+          const [year, month] = item.month.split('-')
+          console.log("Year: "+year+" | Month: "+month)
+          // const monthLabel = date.toLocaleString("default", { month: "short" }); // e.g., "Feb"
+          const date = new Date(Number(year), Number(month) - 1); // months are 0-based in JS
+          console.log("Date: ",date)
+          const monthLabel = date.toLocaleString("default", { month: "short" }); // "Feb"
+          // console.log("Ml1: ",monthLabel1)
+          // const monthLabel = "default";
+          console.log("MonthLabel: ",monthLabel)
           return {
             name: monthLabel,
             weight: item.averageWeight,
