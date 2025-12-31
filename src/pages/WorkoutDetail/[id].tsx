@@ -22,7 +22,7 @@ interface ExerciseDetail {
 	exercise: string;
 	id: string;
 	reps: string;
-	sets: number;
+	sets: string;
 	gif?: string;
 }
 
@@ -35,7 +35,7 @@ const WorkoutDetail = () => {
 	const [exerciseDetails, setExerciseDetails] = useState<ExerciseDetail[]>([]);
 	const [loading, setLoading] = useState(true);
 
-	const [,setDayValue] = useState(null)
+	const [dayValue, setDayValue] = useState("");
 	// Modal for viewing exercise details
 
 	// Confirmation modal for add/delete operations
@@ -51,7 +51,7 @@ const WorkoutDetail = () => {
 	const [editDialogOpen, setEditDialogOpen] = useState(false);
 	const [editForm, setEditForm] = useState({
 		name: "",
-		sets: 0,
+		sets: "",
 		reps: "",
 		desc: "",
 	});
@@ -64,7 +64,7 @@ const WorkoutDetail = () => {
 	const [addForm, setAddForm] = useState({
 		id: "",
 		name: "",
-		sets: 0,
+		sets: "",
 		reps: "",
 		desc: "",
 	});
@@ -76,22 +76,27 @@ const WorkoutDetail = () => {
 			try {
 				const workoutDataRequest = await fetch(getWorkoutDetailsUrl + "/" + id);
 				const wdResp = await workoutDataRequest.json();
-				console.log(wdResp);
-				setDayValue(wdResp.day)
+				console.log("API Response:", wdResp);
+				
+				setDayValue(wdResp.data.name);
 				console.log("The ID is " + id);
 				setExerciseId(id || null);
 
 				// Map API response to ExerciseDetail
-				setExerciseDetails(
-					wdResp.data.map((item: any) => ({
-						id: item.id,
-						exercise: item.details.exercise,
-						sets: item.details.sets,
-						reps: item.details.reps,
-						desc: item.details.desc,
-						gif: item.details.gif
-					}))
+				const details = wdResp.data.details;
+				const mappedExercises: ExerciseDetail[] = Object.entries(details).map(
+					([key, item]: [string, any]) => ({
+						id: key,
+						exercise: item.exName || "",
+						sets: item.sets || "",
+						reps: item.reps || "",
+						desc: item.desc || "",
+						gif: null,
+					})
 				);
+
+				console.log("Mapped Exercises:", mappedExercises);
+				setExerciseDetails(mappedExercises);
 			} catch (error) {
 				console.error("Error fetching workout detail:", error);
 			} finally {
@@ -109,8 +114,8 @@ const WorkoutDetail = () => {
 
 	// Handle click on exercise to open detail modal
 	const handleExerciseClick = (exercise: ExerciseDetail, day: string) => {
-		console.log("Exercise Click: ",day, id)
-		console.log(exercise)
+		console.log("Exercise Click: ", day, id);
+		console.log(exercise);
 	};
 
 	// Open Edit Exercise dialog
@@ -131,14 +136,14 @@ const WorkoutDetail = () => {
 	// Delete exercise
 	const handleDeleteExercise = async (exerciseId: string) => {
 		console.log("Deleting Exercise:", exerciseId);
-		console.log("Exercise Details: ",exerciseDetails)
-		console.log("ID: ",id)
+		console.log("Exercise Details: ", exerciseDetails);
+		console.log("ID: ", id);
 		try {
 			const url = deleteSchedWorkoutUrl;
 			const response = await fetch(url, {
 				method: "DELETE",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({sId: id, exId: exerciseId})
+				body: JSON.stringify({ sId: id, exId: exerciseId }),
 			});
 			const result = await response.json();
 			console.log("Delete Response:", result);
@@ -176,34 +181,54 @@ const WorkoutDetail = () => {
 		const updateExercise = { day: id, id: selectedExerciseId, ...editForm };
 		console.log("Updated Exercise:", updateExercise);
 
-		const url = testUpdateExercise + updateExercise.id;
-		const response = await fetch(url, {
-			method: "PATCH",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify(updateExercise),
-		});
-		const result = await response.json();
-		console.log("API Response:", result);
+		try {
+			const url = testUpdateExercise + updateExercise.id;
+			const response = await fetch(url, {
+				method: "PATCH",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify(updateExercise),
+			});
+			const result = await response.json();
+			console.log("API Response:", result);
 
-		setExerciseDetails((prev) =>
-			prev.map((ex) =>
-				ex.id === selectedExerciseId
-					? {
-							...ex,
-							exercise: editForm.name,
-							sets: Number(editForm.sets),
-							reps: editForm.reps,
-							desc: editForm.desc,
-						}
-					: ex
-			)
-		);
-		setEditDialogOpen(false);
+			setExerciseDetails((prev) =>
+				prev.map((ex) =>
+					ex.id === selectedExerciseId
+						? {
+								...ex,
+								exercise: editForm.name,
+								sets: editForm.sets,
+								reps: editForm.reps,
+								desc: editForm.desc,
+							}
+						: ex
+				)
+			);
+			setEditDialogOpen(false);
+
+			// Show success confirmation
+			setConfirmationData({
+				title: "Exercise Updated",
+				body: result.status || "Exercise has been successfully updated!",
+				exerciseGifUrl: "",
+				exerciseDescription: "",
+			});
+			setConfirmationModalOpen(true);
+		} catch (error) {
+			console.error("Error updating exercise:", error);
+			setConfirmationData({
+				title: "Update Failed",
+				body: "Failed to update exercise. Please try again.",
+				exerciseGifUrl: "",
+				exerciseDescription: "",
+			});
+			setConfirmationModalOpen(true);
+		}
 	};
 
 	// Open Add Exercise dialog
 	const handleAddExercise = () => {
-		setAddForm({ id: "", name: "", sets: 0, reps: "", desc: "" });
+		setAddForm({ id: "", name: "", sets: "", reps: "", desc: "" });
 		setAddDialogOpen(true);
 	};
 
@@ -216,11 +241,11 @@ const WorkoutDetail = () => {
 	const handleAddSubmit = async () => {
 		console.log("New Exercise Data:", addForm);
 		console.log("The exercise ID: ", exerciseID);
-		
+
 		const newExercise: ExerciseDetail = {
 			id: addForm.id,
 			exercise: addForm.name,
-			sets: Number(addForm.sets),
+			sets: addForm.sets,
 			reps: addForm.reps,
 			desc: addForm.desc,
 		};
@@ -258,8 +283,11 @@ const WorkoutDetail = () => {
 		}
 	};
 
-	// Group exercises by their ID (or any custom grouping logic)
-	const getExerciseGroup = (exerciseId: string) => exerciseId;
+	// Group exercises by their numeric part (1A, 1B -> Group 1)
+	const getExerciseGroup = (exerciseId: string) => {
+		const match = exerciseId.match(/^(\d+)/);
+		return match ? match[1] : exerciseId;
+	};
 
 	const groupedExercises = exerciseDetails.reduce((acc, exercise) => {
 		const group = getExerciseGroup(exercise.id);
@@ -271,23 +299,19 @@ const WorkoutDetail = () => {
 	// Determine if exercises in a group are superset
 	const isSuperset = (exercises: ExerciseDetail[]) => exercises.length > 1;
 
-	// Sort groups numerically and alphabetically
+	// Sort groups numerically
 	const sortedGroupEntries = Object.entries(groupedExercises).sort((a, b) => {
-		const parseId = (id: string) => {
-			const match = id.match(/^(\d+)([A-Z]*)$/i);
-			const num = parseInt(match?.[1] || "0", 10);
-			const suffix = match?.[2] || "";
-			return { num, suffix };
-		};
-		const idA = parseId(a[0]);
-		const idB = parseId(b[0]);
-		if (idA.num !== idB.num) return idA.num - idB.num;
-		return idA.suffix.localeCompare(idB.suffix);
+		const numA = parseInt(a[0], 10);
+		const numB = parseInt(b[0], 10);
+		return numA - numB;
 	});
 
 	const totalExercises = exerciseDetails.length;
-	// const totalSets = exerciseDetails.reduce((sum, e) => sum + e.sets, 0);
-	// const estimatedDuration = Math.round(totalSets * 2.5);
+	const totalSets = exerciseDetails.reduce((sum, e) => {
+		const sets = parseInt(e.sets, 10);
+		return sum + (isNaN(sets) ? 0 : sets);
+	}, 0);
+	const estimatedDuration = Math.round(totalSets * 2.5);
 
 	if (loading) {
 		return (
@@ -321,14 +345,18 @@ const WorkoutDetail = () => {
 					Back to Schedule
 				</button>
 				<div className="workout-title">
-					<h1>List of exercises</h1>
+					<h1>{dayValue || "Workout Details"}</h1>
 				</div>
 				<div className="workout-stats">
 					<div className="stat-item">
 						<span>{totalExercises} exercises</span>
 					</div>
-					{/* <div className="stat-item"><span>~{estimatedDuration} min</span></div> */}
-					{/* <div className="stat-item"><span>{totalSets} total sets</span></div> */}
+					<div className="stat-item">
+						<span>~{estimatedDuration} min</span>
+					</div>
+					<div className="stat-item">
+						<span>{totalSets} total sets</span>
+					</div>
 				</div>
 			</div>
 
@@ -368,7 +396,7 @@ const WorkoutDetail = () => {
 									<th className="exercise-col">Exercise</th>
 									<th className="sets-col">Sets</th>
 									<th className="reps-col">Reps</th>
-									<th className="description-col"></th>
+									<th className="description-col">Instructions</th>
 									<th className="actions-col">Actions</th>
 								</tr>
 							</thead>
@@ -379,15 +407,17 @@ const WorkoutDetail = () => {
 											className="exercise-cell"
 											onClick={() => id && handleExerciseClick(exercise, id)}
 										>
-											<div className="exercise-name">
-												{exercise.exercise}
-											</div>
+											<div className="exercise-name">{exercise.exercise}</div>
 										</td>
 										<td className="sets-cell">
-											<div className="stat-badge">{exercise.sets}</div>
+											<div className="stat-badge">
+												{exercise.sets || "—"}
+											</div>
 										</td>
 										<td className="reps-cell">
-											<div className="stat-badge">{exercise.reps}</div>
+											<div className="stat-badge">
+												{exercise.reps || "—"}
+											</div>
 										</td>
 										<td
 											className={`description-cell ${
@@ -396,7 +426,7 @@ const WorkoutDetail = () => {
 										>
 											{exercise.desc ? (
 												<div className="description-content">
-													<strong>Instructions:</strong> {exercise.desc}
+													{exercise.desc}
 												</div>
 											) : (
 												"No specific instructions provided"
@@ -464,14 +494,12 @@ const WorkoutDetail = () => {
 				)}
 			</div>
 
-
 			{/* Confirmation Modal for Add/Delete Operations */}
 			<ModalBox
 				open={confirmationModalOpen}
 				onClose={() => setConfirmationModalOpen(false)}
 				title={confirmationData.title}
 				body={confirmationData.body}
-				// exerciseGifUrl={confirmationData.exerciseGifUrl}
 				exerciseDescription={confirmationData.exerciseDescription}
 			/>
 
@@ -486,7 +514,7 @@ const WorkoutDetail = () => {
 					<TextField
 						margin="dense"
 						label="Sets"
-						type="number"
+						type="text"
 						fullWidth
 						variant="standard"
 						value={editForm.sets}
@@ -537,6 +565,7 @@ const WorkoutDetail = () => {
 						variant="standard"
 						value={addForm.id}
 						onChange={(e) => handleAddChange("id", e.target.value)}
+						placeholder="e.g., 1A, 2B, 5"
 					/>
 					<TextField
 						margin="dense"
@@ -550,11 +579,12 @@ const WorkoutDetail = () => {
 					<TextField
 						margin="dense"
 						label="Sets"
-						type="number"
+						type="text"
 						fullWidth
 						variant="standard"
 						value={addForm.sets}
 						onChange={(e) => handleAddChange("sets", e.target.value)}
+						placeholder="e.g., 3 or leave empty"
 					/>
 					<TextField
 						margin="dense"
@@ -564,6 +594,7 @@ const WorkoutDetail = () => {
 						variant="standard"
 						value={addForm.reps}
 						onChange={(e) => handleAddChange("reps", e.target.value)}
+						placeholder="e.g., 12-10-8 or leave empty"
 					/>
 					<TextField
 						margin="dense"

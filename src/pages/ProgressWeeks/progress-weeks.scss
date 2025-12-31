@@ -101,34 +101,161 @@ $accent-yellow: #eab308;
 
   // Header
   .progress-header {
-    text-align: center;
     margin-bottom: 3rem;
     position: relative;
     z-index: 1;
     animation: slideInUp 0.8s ease-out;
     
-    h1 {
-      font-size: 2.5rem;
-      font-weight: 700;
-      color: $text-primary;
-      margin-bottom: 0.5rem;
-      line-height: 1.2;
-      
-      &::after {
-        content: "";
-        display: block;
-        width: 80px;
-        height: 3px;
-        @include gradient-bg($accent-emerald, $accent-blue);
-        margin: 15px auto 0;
-        border-radius: 2px;
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .header-left {
+      flex: 1;
+      min-width: 300px;
+
+      h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: $text-primary;
+        margin-bottom: 0.5rem;
+        line-height: 1.2;
+        
+        &::after {
+          content: "";
+          display: block;
+          width: 80px;
+          height: 3px;
+          @include gradient-bg($accent-emerald, $accent-blue);
+          margin: 15px 0 0;
+          border-radius: 2px;
+        }
+      }
+
+      .subtitle {
+        font-size: 1.125rem;
+        color: $text-secondary;
+        font-weight: 400;
       }
     }
 
-    .subtitle {
-      font-size: 1.125rem;
-      color: $text-secondary;
-      font-weight: 400;
+    .header-right {
+      .report-controls {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+
+        .radio-group {
+          display: flex;
+          gap: 1rem;
+          padding: 0.5rem;
+          background: rgba(255, 255, 255, 0.05);
+          border-radius: 16px;
+          border: 1px solid rgba(255, 255, 255, 0.1);
+
+          .radio-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            position: relative;
+
+            &:hover {
+              background: rgba(255, 255, 255, 0.08);
+            }
+
+            input[type="radio"] {
+              position: absolute;
+              opacity: 0;
+              cursor: pointer;
+
+              &:checked + .radio-custom {
+                background: $accent-emerald;
+                border-color: $accent-emerald;
+
+                &::after {
+                  transform: scale(1);
+                  opacity: 1;
+                }
+              }
+
+              &:checked ~ .radio-text {
+                color: $text-primary;
+                font-weight: 600;
+              }
+            }
+
+            .radio-custom {
+              width: 18px;
+              height: 18px;
+              border: 2px solid rgba(255, 255, 255, 0.3);
+              border-radius: 50%;
+              position: relative;
+              transition: all 0.3s ease;
+              flex-shrink: 0;
+
+              &::after {
+                content: '';
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%) scale(0);
+                width: 8px;
+                height: 8px;
+                background: white;
+                border-radius: 50%;
+                transition: all 0.3s ease;
+                opacity: 0;
+              }
+            }
+
+            .radio-text {
+              font-size: 0.875rem;
+              color: $text-secondary;
+              font-weight: 500;
+              transition: all 0.3s ease;
+              white-space: nowrap;
+            }
+          }
+        }
+
+        .download-btn {
+          @include gradient-bg($accent-emerald, $success-light);
+          color: $text-primary;
+          border: none;
+          padding: 0.875rem 1.5rem;
+          border-radius: 16px;
+          font-weight: 600;
+          font-size: 0.875rem;
+          cursor: pointer;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          white-space: nowrap;
+
+          svg {
+            flex-shrink: 0;
+          }
+
+          &:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 15px 35px rgba(16, 185, 129, 0.4);
+          }
+
+          &:active {
+            transform: translateY(0) scale(0.98);
+          }
+        }
+      }
     }
   }
 
@@ -642,8 +769,39 @@ $accent-yellow: #eab308;
   .progress-weeks {
     padding: 1rem;
 
-    .progress-header h1 {
-      font-size: 2rem;
+    .progress-header {
+      .header-content {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .header-left {
+        min-width: 100%;
+
+        h1 {
+          font-size: 2rem;
+        }
+      }
+
+      .header-right {
+        width: 100%;
+
+        .report-controls {
+          flex-direction: column;
+          width: 100%;
+          gap: 0.75rem;
+
+          .radio-group {
+            width: 100%;
+            justify-content: center;
+          }
+
+          .download-btn {
+            width: 100%;
+            justify-content: center;
+          }
+        }
+      }
     }
 
     .weeks-overview .stats-summary {
@@ -676,8 +834,10 @@ $accent-yellow: #eab308;
   .progress-weeks {
     padding: 0.75rem;
 
-    .progress-header h1 {
-      font-size: 1.75rem;
+    .progress-header {
+      .header-left h1 {
+        font-size: 1.75rem;
+      }
     }
 
     .weeks-grid .week-card {

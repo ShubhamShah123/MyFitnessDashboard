@@ -3,11 +3,10 @@ import "./pieChartBox.scss";
 import { useEffect, useState } from "react";
 
 interface Exercise {
-  exercise: string;
+  exName: string;
   desc?: string;
-  gif?: string;
   reps?: string;
-  sets?: number;
+  sets?: string;
 }
 
 interface WorkoutData {
@@ -25,7 +24,7 @@ const PieChartBox = () => {
         const res = await fetch(testGetWorkoutDay);
         const data = await res.json();
         console.log(data);
-        setWorkout(data.data);
+        setWorkout(data.data); // Uncommented this line
       } catch (err) {
         console.error("Error fetching workout:", err);
       }
@@ -42,7 +41,7 @@ const PieChartBox = () => {
           <h2 className="workoutName">{workout.name}</h2>
           <ul className="exerciseList">
             {workout.exercise_list.map((item, index) => {
-              const exerciseName = item.exercise; // extract string
+              const exerciseName = item.exName; // Changed from item.exercise
               let type = "main";
 
               if (exerciseName.toLowerCase().includes("warmup"))
@@ -53,7 +52,14 @@ const PieChartBox = () => {
               return (
                 <li key={index} className={`exerciseItem ${type}`}>
                   <span className="dot" />
-                  {exerciseName}
+                  <div className="exerciseDetails">
+                    <span className="exerciseName">{exerciseName}: </span>
+                    {item.sets && item.reps && (
+                      <span className="exerciseStats">
+                        {item.sets} sets × {item.reps} reps
+                      </span>
+                    )}
+                  </div>
                 </li>
               );
             })}

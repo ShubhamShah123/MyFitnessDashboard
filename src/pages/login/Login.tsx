@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './login.scss';
 import { loginUrl } from '../../url';
 import { useCookies } from 'react-cookie'
@@ -9,8 +9,23 @@ const Login = () => {
   const [userPassword, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [,setCookie] = useCookies(['key'])
+  const [cookies,setCookie] = useCookies(['key'])
   const navigate = useNavigate();
+
+  useEffect(()=> {
+    const handleRedirect = () => {
+      console.log("Handle redirect in login")
+      if (cookies.key){
+        console.log("Cookies Key is present!")
+        navigate('/dashboard');
+      }
+      else{
+        console.log("Cookies key is not present!")
+      }
+    };
+    handleRedirect();
+  }
+  ,[cookies, navigate]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -189,3 +204,7 @@ const Login = () => {
 };
 
 export default Login;
+
+function handleRedirect() {
+  throw new Error('Function not implemented.');
+}

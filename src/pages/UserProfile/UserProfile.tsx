@@ -22,17 +22,14 @@ const UserProfile = () => {
     const getUserProfile = async () => {
       try {
         setLoading(true);
-        const profileRequest = await fetch(getProfileUrl, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({key: cookies.key}),
+        const profileRequest = await fetch(getProfileUrl + "/" + cookies.key, {
+          method: "GET"
         });
         const loginResponse = await profileRequest.json();
         console.log("response from server: ", loginResponse);
         
         if (loginResponse.data) {
+          console.log("First if after the response")
           setProfileData(loginResponse.data);
         } else {
           setError("Failed to load profile data");
@@ -97,8 +94,8 @@ const UserProfile = () => {
                     </svg>
                   </div>
                   <div className="detail-content">
-                    <label>First Name</label>
-                    <span>{profileData.firstName}</span>
+                    <label>Total Sessions</label>
+                    <span>{profileData.sessionCount}</span>
                   </div>
                 </div>
                 
@@ -109,8 +106,8 @@ const UserProfile = () => {
                     </svg>
                   </div>
                   <div className="detail-content">
-                    <label>Last Name</label>
-                    <span>{profileData.lastName}</span>
+                    <label>Average Session Time of Session</label>
+                    <span>{profileData.averageTimeSession}</span>
                   </div>
                 </div>
               </div>
