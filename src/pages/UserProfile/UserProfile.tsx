@@ -9,6 +9,9 @@ interface UserProfileData {
   firstName: string;
   lastName: string;
   phoneNumber: string;
+  sessionCount: number;
+  averageTimeSession: string;
+
 }
 
 const UserProfile = () => {

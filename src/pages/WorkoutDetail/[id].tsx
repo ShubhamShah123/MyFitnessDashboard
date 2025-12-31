@@ -23,7 +23,7 @@ interface ExerciseDetail {
 	id: string;
 	reps: string;
 	sets: string;
-	gif?: string;
+	gif?: string | null;
 }
 
 const WorkoutDetail = () => {

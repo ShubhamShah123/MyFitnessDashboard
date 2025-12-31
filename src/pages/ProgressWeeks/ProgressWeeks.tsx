@@ -94,7 +94,6 @@ const ProgressWeeks: React.FC = () => {
     const avgWeight = data.weekly_data.reduce((sum, week) => sum + week.summary.average_weight, 0) / data.weekly_data.length;
 
     // Get data based on report type
-    const reportData = type === 'weekly' ? data.weekly_data : groupByMonth(data.weekly_data);
 
     const htmlContent = `
       <!DOCTYPE html>
