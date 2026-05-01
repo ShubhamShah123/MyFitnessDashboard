@@ -48,15 +48,15 @@ export const menu = [
         icon: "post2.svg",
       },
       {
-        id: 5,
-        title: "Exercise List",
-        url: "/dashboard/exercise_list",
-        icon: "post2.svg",
-      },
-      {
         id: 6,
         title: "Daily Workout List",
         url: "/dashboard/daily_workout_list",
+        icon: "post2.svg",
+      },
+      {
+        id: 7,
+        title: "Exercise List 2",
+        url: "/dashboard/get_exercise_groups",
         icon: "post2.svg",
       },
     ],

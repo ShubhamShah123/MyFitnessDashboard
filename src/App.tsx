@@ -21,7 +21,8 @@ import "./styles/global.scss";
 import MealsSchedule from "./pages/MealsInfo/MealsSchedule";
 import ProgressWeeks from "./pages/ProgressWeeks/ProgressWeeks";
 import UserProfile from "./pages/UserProfile/UserProfile";
-import ExerciseList from "./pages/ExerciseLIst/ExerciseList";
+// import ExerciseList from "./pages/ExerciseLIst/ExerciseList";
+import GetExerciseGroups from "./pages/GetExerciseGroups/GetExerciseGroups";
 
 function App() {
   const Layout = () => {
@@ -86,13 +87,14 @@ function App() {
           path: "profile",
           element: <UserProfile />,
         },
-        {
-          path: "exercise_list",
-          element: <ExerciseList />,
-        },
+       
         {
           path: "daily_workout_list",
           element: <DailyWorkoutList />,
+        },
+        {
+          path: "get_exercise_groups",
+          element: <GetExerciseGroups />,
         },
       ],
     },

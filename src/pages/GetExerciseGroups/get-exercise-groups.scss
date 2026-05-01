@@ -1,0 +1,625 @@
+@import "../../styles/variables.scss";
+
+// ─── Variables ────────────────────────────────────────────────────────────────
+$primary-dark:    #0a0a0a;
+$secondary-dark:  #1a1a1a;
+$card-dark:       #111111;
+$border-dark:     #2a2a2a;
+$text-primary:    #ffffff;
+$text-secondary:  #a1a1a1;
+$text-muted:      #666666;
+
+$accent-emerald:  #10b981;
+$accent-blue:     #3b82f6;
+$accent-purple:   #8b5cf6;
+$accent-orange:   #f59e0b;
+$accent-cyan:     #06b6d4;
+$accent-lime:     #c8f135;
+$accent-red:      #ff6b35;
+
+$color-superset:  #f59e0b;
+$color-giant:     #ff6b35;
+$color-cardio:    #38bdf8;
+$color-warmup:    #a78bfa;
+$color-rest:      #6366f1;
+
+// ─── Mixins ───────────────────────────────────────────────────────────────────
+@mixin glass-effect {
+  backdrop-filter: blur(12px);
+  background: rgba(17, 17, 17, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+// ─── Animations ───────────────────────────────────────────────────────────────
+@keyframes slideInUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes spin {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+// ─── Root ─────────────────────────────────────────────────────────────────────
+.ExerciseGroups {
+  min-height: 100vh;
+  background: $primary-dark;
+  color: $text-primary;
+  font-family: 'DM Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  padding: 40px 20px;
+  position: relative;
+  overflow-x: hidden;
+
+  // Ambient glow background
+  &::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(circle at 15% 15%, rgba(16, 185, 129, 0.08) 0%, transparent 50%),
+      radial-gradient(circle at 85% 80%, rgba(59, 130, 246, 0.08) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+}
+
+// ─── Container ────────────────────────────────────────────────────────────────
+.eg-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+// ─── Page Header ──────────────────────────────────────────────────────────────
+.eg-page-header {
+  margin-bottom: 40px;
+  animation: slideInUp 0.6s ease-out;
+}
+
+.eg-page-title {
+  font-size: 2.6rem;
+  font-weight: 700;
+  color: $text-primary;
+  margin-bottom: 6px;
+  letter-spacing: 0.5px;
+
+  &::after {
+    content: "";
+    display: block;
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, $accent-emerald, $accent-blue);
+    margin-top: 12px;
+    border-radius: 2px;
+  }
+}
+
+.eg-subtitle {
+  color: $text-muted;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-top: 14px;
+}
+
+// ─── Loading & Error ──────────────────────────────────────────────────────────
+.eg-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: 20px;
+  animation: fadeIn 0.4s ease-out;
+
+  p { color: $text-secondary; font-size: 1rem; }
+}
+
+.eg-spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid rgba(16, 185, 129, 0.2);
+  border-top-color: $accent-emerald;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.eg-error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+
+  p {
+    color: #ef4444;
+    font-size: 1.05rem;
+    padding: 20px 28px;
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 12px;
+  }
+}
+
+// ─── Group Card ───────────────────────────────────────────────────────────────
+.eg-card {
+  background: $secondary-dark;
+  border: 1px solid $border-dark;
+  border-radius: 14px;
+  margin-bottom: 28px;
+  overflow: hidden;
+  animation: slideInUp 0.5s ease-out backwards;
+
+  @for $i from 1 through 10 {
+    &:nth-child(#{$i}) { animation-delay: #{($i - 1) * 0.07}s; }
+  }
+
+  &--rest {
+    .eg-icon { background: $color-rest; }
+  }
+}
+
+// ─── Card Header ──────────────────────────────────────────────────────────────
+.eg-card-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 22px;
+  border-bottom: 1px solid $border-dark;
+  background: linear-gradient(90deg, #1e1e1e 0%, #1a1a1a 100%);
+}
+
+.eg-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: $accent-lime;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  flex-shrink: 0;
+}
+
+.eg-group-name {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: $text-primary;
+  letter-spacing: 0.3px;
+}
+
+.eg-count-badge {
+  margin-left: auto;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid $border-dark;
+  color: $text-muted;
+  font-size: 0.72rem;
+  padding: 4px 12px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+// ─── Add Exercise Button ───────────────────────────────────────────────────────
+.eg-add-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  background: rgba($accent-emerald, 0.1);
+  border: 1px solid rgba($accent-emerald, 0.3);
+  border-radius: 8px;
+  color: $accent-emerald;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+
+  &:hover {
+    background: rgba($accent-emerald, 0.2);
+    box-shadow: 0 0 12px rgba($accent-emerald, 0.25);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: scale(0.96);
+  }
+
+  &__icon {
+    font-size: 1.1rem;
+    line-height: 1;
+    font-weight: 400;
+  }
+
+  &__label {
+    @media (max-width: 500px) {
+      display: none;
+    }
+  }
+}
+
+// ─── Rest Body ────────────────────────────────────────────────────────────────
+.eg-rest-body {
+  padding: 32px 22px;
+  text-align: center;
+  color: $text-muted;
+  font-style: italic;
+  font-size: 0.92rem;
+}
+
+// ─── Table ────────────────────────────────────────────────────────────────────
+.eg-table-wrapper {
+  overflow-x: auto;
+}
+
+.eg-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+
+  thead tr {
+    background: rgba(0, 0, 0, 0.3);
+  }
+
+  th {
+    text-align: left;
+    padding: 11px 18px;
+    color: $text-muted;
+    font-size: 0.68rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.4px;
+    border-bottom: 1px solid $border-dark;
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 13px 18px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    vertical-align: middle;
+  }
+
+  tbody tr {
+    transition: background 0.15s ease;
+
+    &:last-child td { border-bottom: none; }
+
+    &:hover td { background: rgba(255, 255, 255, 0.03); }
+  }
+}
+
+// ─── Row Type Colour Coding ───────────────────────────────────────────────────
+.eg-row {
+  &--superset td:first-child .eg-key {
+    color: $color-superset;
+    border-color: rgba($color-superset, 0.3);
+    background: rgba($color-superset, 0.08);
+  }
+
+  &--giant-set td:first-child .eg-key {
+    color: $color-giant;
+    border-color: rgba($color-giant, 0.3);
+    background: rgba($color-giant, 0.08);
+  }
+
+  &--cardio td:first-child .eg-key {
+    color: $color-cardio;
+    border-color: rgba($color-cardio, 0.3);
+    background: rgba($color-cardio, 0.08);
+  }
+
+  &--warmup td:first-child .eg-key {
+    color: $color-warmup;
+    border-color: rgba($color-warmup, 0.3);
+    background: rgba($color-warmup, 0.08);
+  }
+}
+
+// ─── Key Badge ────────────────────────────────────────────────────────────────
+.eg-key {
+  display: inline-block;
+  font-family: 'Courier New', monospace;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  padding: 3px 10px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid $border-dark;
+  color: $accent-lime;
+  min-width: 36px;
+  text-align: center;
+}
+
+// ─── Exercise Name & Desc ─────────────────────────────────────────────────────
+.eg-ex-name {
+  font-weight: 500;
+  color: $text-primary;
+  line-height: 1.4;
+}
+
+.eg-ex-desc {
+  font-size: 0.73rem;
+  color: $text-muted;
+  margin-top: 3px;
+  font-style: italic;
+  line-height: 1.3;
+}
+
+// ─── Sets / Reps ──────────────────────────────────────────────────────────────
+.eg-sets-reps {
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: $text-secondary;
+  white-space: nowrap;
+
+  &--cardio {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 400;
+    font-style: italic;
+    color: $color-cardio;
+    white-space: normal;
+  }
+}
+
+.eg-dash {
+  color: $text-muted;
+}
+
+// ─── Action Buttons ───────────────────────────────────────────────────────────
+.eg-action-btns {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.eg-btn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  flex-shrink: 0;
+
+  &:active { transform: scale(0.92); }
+
+  &--update {
+    background: rgba($accent-blue, 0.12);
+    border: 1px solid rgba($accent-blue, 0.25);
+
+    &:hover {
+      background: rgba($accent-blue, 0.25);
+      box-shadow: 0 0 10px rgba($accent-blue, 0.3);
+      transform: translateY(-1px);
+    }
+  }
+
+  &--delete {
+    background: rgba(#ef4444, 0.12);
+    border: 1px solid rgba(#ef4444, 0.25);
+
+    &:hover {
+      background: rgba(#ef4444, 0.25);
+      box-shadow: 0 0 10px rgba(#ef4444, 0.3);
+      transform: translateY(-1px);
+    }
+  }
+}
+
+// ─── Type Tags ────────────────────────────────────────────────────────────────
+.eg-tag {
+  display: inline-block;
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 3px 9px;
+  border-radius: 5px;
+  white-space: nowrap;
+
+  &--superset {
+    background: rgba($color-superset, 0.15);
+    color: $color-superset;
+    border: 1px solid rgba($color-superset, 0.3);
+  }
+
+  &--giant-set {
+    background: rgba($color-giant, 0.15);
+    color: $color-giant;
+    border: 1px solid rgba($color-giant, 0.3);
+  }
+
+  &--cardio {
+    background: rgba($color-cardio, 0.15);
+    color: $color-cardio;
+    border: 1px solid rgba($color-cardio, 0.3);
+  }
+
+  &--warmup {
+    background: rgba($color-warmup, 0.15);
+    color: $color-warmup;
+    border: 1px solid rgba($color-warmup, 0.3);
+  }
+}
+
+// ─── Responsive ───────────────────────────────────────────────────────────────
+@media (max-width: 768px) {
+  .ExerciseGroups {
+    padding: 24px 12px;
+  }
+
+  .eg-page-title {
+    font-size: 1.9rem;
+  }
+
+  .eg-card-header {
+    padding: 14px 16px;
+    gap: 10px;
+  }
+
+  .eg-group-name {
+    font-size: 1rem;
+  }
+
+  .eg-table {
+    th, td {
+      padding: 10px 12px;
+    }
+
+    // Hide Type column on small screens
+    th:last-child,
+    td:last-child {
+      display: none;
+    }
+  }
+
+  .eg-ex-desc {
+    display: none;
+  }
+}
+
+// ─── Add Exercise Dialog (MUI Overrides) ──────────────────────────────────────
+
+// Backdrop
+.MuiDialog-root .MuiBackdrop-root {
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(6px);
+}
+
+// Paper (dialog box)
+.MuiDialog-root .MuiPaper-root {
+  background: #1a1a1a;
+  border: 1px solid $border-dark;
+  border-radius: 16px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+  min-width: 420px;
+  color: $text-primary;
+
+  @media (max-width: 480px) {
+    min-width: unset;
+    margin: 16px;
+  }
+}
+
+// Title
+.MuiDialog-root .MuiDialogTitle-root {
+  background: linear-gradient(90deg, #1e1e1e, #1a1a1a);
+  border-bottom: 1px solid $border-dark;
+  padding: 20px 24px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: $text-primary;
+  letter-spacing: 0.3px;
+}
+
+// Content area
+.MuiDialog-root .MuiDialogContent-root {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  // MUI standard variant text fields
+  .MuiFormControl-root {
+    margin-top: 8px;
+  }
+
+  // Label
+  .MuiInputLabel-root {
+    color: $text-muted;
+    font-size: 0.85rem;
+
+    &.Mui-focused {
+      color: $accent-emerald;
+    }
+  }
+
+  // Input text
+  .MuiInput-root {
+    color: $text-primary;
+    font-size: 0.9rem;
+
+    // Underline default
+    &::before {
+      border-bottom-color: $border-dark;
+    }
+
+    // Underline hover
+    &:hover:not(.Mui-disabled)::before {
+      border-bottom-color: rgba($accent-emerald, 0.4);
+    }
+
+    // Underline focused
+    &::after {
+      border-bottom-color: $accent-emerald;
+    }
+
+    input,
+    textarea {
+      color: $text-primary;
+
+      &::placeholder {
+        color: $text-muted;
+        opacity: 1;
+      }
+    }
+  }
+}
+
+// Actions bar
+.MuiDialog-root .MuiDialogActions-root {
+  padding: 16px 24px;
+  border-top: 1px solid $border-dark;
+  gap: 10px;
+
+  // Cancel button
+  .MuiButton-text {
+    color: $text-muted;
+    font-size: 0.85rem;
+    text-transform: none;
+    letter-spacing: 0;
+    border-radius: 8px;
+    padding: 7px 16px;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.06);
+      color: $text-primary;
+    }
+  }
+
+  // Add Exercise (contained) button
+  .MuiButton-contained {
+    background: $accent-emerald;
+    color: #000;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: none;
+    letter-spacing: 0;
+    border-radius: 8px;
+    padding: 7px 20px;
+    box-shadow: 0 4px 14px rgba($accent-emerald, 0.35);
+
+    &:hover {
+      background: lighten($accent-emerald, 6%);
+      box-shadow: 0 6px 18px rgba($accent-emerald, 0.45);
+    }
+
+    &:active {
+      transform: scale(0.97);
+    }
+  }
+}

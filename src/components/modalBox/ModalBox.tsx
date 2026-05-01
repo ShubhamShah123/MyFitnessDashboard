@@ -54,7 +54,6 @@ const descriptionBoxStyle = {
   backgroundColor: "#2a2a2a",
   borderRadius: "8px",
   padding: "12px",
-  // border: "1px solid #4caf50",
 };
 
 const ModalBox: React.FC<ModalBoxProps> = ({
@@ -69,9 +68,9 @@ const ModalBox: React.FC<ModalBoxProps> = ({
     <Modal open={open} onClose={onClose}>
       <Box sx={modalStyle}>
         <Box sx={contentWrapperStyle}>
-          {/* GIF Section */}
-          <Box sx={gifContainerStyle}>
-            {exerciseGifUrl ? (
+          {/* GIF Section — only renders when URL is present */}
+          {exerciseGifUrl && (
+            <Box sx={gifContainerStyle}>
               <img
                 src={exerciseGifUrl}
                 alt="Exercise demo"
@@ -82,12 +81,8 @@ const ModalBox: React.FC<ModalBoxProps> = ({
                   borderRadius: "10px",
                 }}
               />
-            ) : (
-              <Typography variant="body2" color="#aaa">
-                No exercise GIF available
-              </Typography>
-            )}
-          </Box>
+            </Box>
+          )}
 
           {/* Info Section */}
           <Box sx={infoContainerStyle}>

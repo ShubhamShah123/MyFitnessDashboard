@@ -554,7 +554,7 @@ const WorkoutDetail = () => {
 				open={addDialogOpen}
 				onClose={() => setAddDialogOpen(false)}
 				disableRestoreFocus
-			>
+				>
 				<DialogTitle>Add New Exercise</DialogTitle>
 				<DialogContent>
 					<TextField
