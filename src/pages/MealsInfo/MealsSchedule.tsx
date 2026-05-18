@@ -5,6 +5,7 @@ import "./meals-schedule.scss";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import { getMealsScheduleUrl } from "../../url";
+import { useCookies } from "react-cookie";
 
 
 interface MealPlan {
@@ -17,12 +18,14 @@ interface MealPlan {
 const MealsSchedule = () => {
   const [schedule, setSchedule] = useState<MealPlan[]>([]);
   const [loading, setLoading] = useState(true);
+  const [profileId,,] = useCookies(['profile'])
   const navigate = useNavigate();
+  const profile = profileId.profile;
 
   useEffect(() => {
     const getMealsSchedule = async () => {
       try {
-        const mealsSched = await fetch(getMealsScheduleUrl)
+        const mealsSched = await fetch(getMealsScheduleUrl + "?profile=" + profile, {method: 'GET'})
         const mealsSchedResp = await mealsSched.json()
         setSchedule(mealsSchedResp.data);
       } catch (error) {

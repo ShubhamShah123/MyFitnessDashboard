@@ -39,14 +39,8 @@ $accent-emerald: #10b981;
 
 // Animations
 @keyframes slideInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes shimmer {
@@ -64,26 +58,9 @@ $accent-emerald: #10b981;
   50% { transform: rotate(1deg) scale(1.05); }
 }
 
-@keyframes tooltipFadeIn {
-  0% {
-    opacity: 0;
-    transform: translateX(50%) translateY(-4px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(50%) translateY(0);
-  }
-}
-
 @keyframes dropdownFadeIn {
-  0% {
-    opacity: 0;
-    transform: translateY(-8px) scale(0.95);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
+  0% { opacity: 0; transform: translateY(-8px) scale(0.95); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .navbar {
@@ -95,36 +72,19 @@ $accent-emerald: #10b981;
     position: relative;
     @include glass-effect;
     border-bottom: 0px solid $border-dark;
-    // box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     animation: slideInUp 0.6s ease-out;
     z-index: 100;
 
-    // Background overlay effect
     &::before {
         content: '';
         position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
+        top: 0; left: 0; right: 0; bottom: 0;
         background: radial-gradient(circle at 10% 50%, rgba(16, 185, 129, 0.05) 0%, transparent 50%),
                     radial-gradient(circle at 90% 50%, rgba(59, 130, 246, 0.05) 0%, transparent 50%);
         pointer-events: none;
         z-index: -1;
     }
-
-    // // Top gradient border
-    // &::after {
-    //     content: '';
-    //     position: absolute;
-    //     top: 0;
-    //     left: 0;
-    //     right: 0;
-    //     height: 2px;
-    //     @include gradient-bg($accent-emerald, $accent-blue);
-    //     z-index: 1;
-    // }
 
     .logo {
         display: flex;
@@ -149,14 +109,11 @@ $accent-emerald: #10b981;
             position: relative;
             overflow: hidden;
 
-            // Shimmer effect
             &::before {
                 content: '';
                 position: absolute;
-                top: 0;
-                left: -100%;
-                width: 100%;
-                height: 100%;
+                top: 0; left: -100%;
+                width: 100%; height: 100%;
                 background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
                 transition: left 0.6s ease;
             }
@@ -164,15 +121,10 @@ $accent-emerald: #10b981;
             &:hover {
                 @include card-hover;
                 box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
-
-                &::before {
-                    left: 100%;
-                }
+                &::before { left: 100%; }
             }
 
-            svg {
-                filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
-            }
+            svg { filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3)); }
         }
 
         span {
@@ -190,36 +142,29 @@ $accent-emerald: #10b981;
         gap: 20px;
         z-index: 2;
 
+        // ── Streak ──────────────────────────────────────────────
         .streak-display {
             display: flex;
             align-items: center;
             gap: 8px;
-            // @include gradient-bg($accent-emerald, $success-light);
             padding: 10px 16px;
             border-radius: 20px;
-            // box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
 
-            // Shimmer effect
             &::before {
                 content: '';
                 position: absolute;
-                top: 0;
-                left: -100%;
-                width: 100%;
-                height: 100%;
+                top: 0; left: -100%;
+                width: 100%; height: 100%;
                 background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
                 transition: left 0.6s ease;
             }
 
             &:hover {
                 @include button-hover;
-
-                &::before {
-                    left: 100%;
-                }
+                &::before { left: 100%; }
             }
 
             .streak-text {
@@ -236,6 +181,180 @@ $accent-emerald: #10b981;
             }
         }
 
+        // ── Profile Selector ─────────────────────────────────────
+        .profile-selector {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            .profile-trigger {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                cursor: pointer;
+                padding: 8px 12px;
+                border-radius: 10px;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                @include glass-effect;
+                background: rgba(17, 17, 17, 0.6);
+                position: relative;
+                overflow: hidden;
+                user-select: none;
+
+                &::before {
+                    content: '';
+                    position: absolute;
+                    top: 0; left: -100%;
+                    width: 100%; height: 100%;
+                    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+                    transition: left 0.5s ease;
+                }
+
+                &:hover, &.open {
+                    background: rgba(17, 17, 17, 0.9);
+                    border-color: rgba(16, 185, 129, 0.4);
+                    box-shadow: 0 4px 16px rgba(16, 185, 129, 0.15);
+                    &::before { left: 100%; }
+                }
+
+                svg:first-child {
+                    color: $accent-emerald;
+                    flex-shrink: 0;
+                    opacity: 0.85;
+                }
+
+                .profile-trigger-label {
+                    font-size: 13px;
+                    font-weight: 500;
+                    color: $text-primary;
+                    max-width: 120px;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                }
+
+                .dropdown-arrow {
+                    color: $text-secondary;
+                    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                    flex-shrink: 0;
+
+                    &.rotated {
+                        transform: rotate(180deg);
+                        color: $accent-emerald;
+                    }
+                }
+            }
+
+            // Dropdown list
+            .profile-dropdown {
+                position: absolute;
+                top: calc(100% + 8px);
+                left: 0;
+                min-width: 200px;
+                @include glass-effect;
+                background: rgba(13, 13, 13, 0.97);
+                border: 1px solid $border-dark;
+                border-radius: 12px;
+                box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+                padding: 6px 0;
+                z-index: 1000;
+                animation: dropdownFadeIn 0.2s ease;
+                overflow: hidden;
+
+                .profile-dropdown-item {
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    padding: 10px 14px;
+                    cursor: pointer;
+                    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+                    position: relative;
+
+                    &:hover {
+                        background: rgba(16, 185, 129, 0.08);
+                        padding-left: 18px;
+                        border-left: 3px solid $accent-emerald;
+                    }
+
+                    &.active {
+                        background: rgba(16, 185, 129, 0.1);
+                        border-left: 3px solid $accent-emerald;
+                        padding-left: 18px;
+
+                        .profile-avatar {
+                            background: $accent-emerald;
+                            color: #000;
+                        }
+                    }
+
+                    .profile-avatar {
+                        width: 28px;
+                        height: 28px;
+                        border-radius: 50%;
+                        background: rgba(59, 130, 246, 0.25);
+                        color: $accent-blue;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-size: 11px;
+                        font-weight: 700;
+                        flex-shrink: 0;
+                        transition: all 0.2s ease;
+                        border: 1px solid rgba(59, 130, 246, 0.3);
+                    }
+
+                    span {
+                        font-size: 13px;
+                        font-weight: 500;
+                        color: $text-primary;
+                        flex: 1;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
+                    }
+
+                    .check-icon {
+                        color: $accent-emerald;
+                        flex-shrink: 0;
+                    }
+                }
+            }
+
+            // Log button
+            .log-profile-btn {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                padding: 8px 14px;
+                border-radius: 10px;
+                border: 1px solid rgba(16, 185, 129, 0.35);
+                background: rgba(16, 185, 129, 0.08);
+                color: $accent-emerald;
+                font-size: 13px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+                white-space: nowrap;
+                font-family: inherit;
+
+                svg { flex-shrink: 0; }
+
+                &:hover {
+                    background: rgba(16, 185, 129, 0.18);
+                    border-color: $accent-emerald;
+                    box-shadow: 0 4px 16px rgba(16, 185, 129, 0.25);
+                    transform: translateY(-1px);
+                }
+
+                &:active {
+                    transform: translateY(0);
+                    box-shadow: none;
+                }
+            }
+        }
+
+        // ── User Section ─────────────────────────────────────────
         .icon {
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -264,14 +383,11 @@ $accent-emerald: #10b981;
                 position: relative;
                 overflow: hidden;
 
-                // Shimmer effect
                 &::before {
                     content: '';
                     position: absolute;
-                    top: 0;
-                    left: -100%;
-                    width: 100%;
-                    height: 100%;
+                    top: 0; left: -100%;
+                    width: 100%; height: 100%;
                     background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
                     transition: left 0.6s ease;
                 }
@@ -280,10 +396,7 @@ $accent-emerald: #10b981;
                     @include card-hover;
                     background: rgba(17, 17, 17, 0.8);
                     border-color: rgba(255, 255, 255, 0.2);
-
-                    &::before {
-                        left: 100%;
-                    }
+                    &::before { left: 100%; }
                 }
 
                 img {
@@ -350,10 +463,8 @@ $accent-emerald: #10b981;
                     &::before {
                         content: '';
                         position: absolute;
-                        top: 0;
-                        left: -100%;
-                        width: 100%;
-                        height: 100%;
+                        top: 0; left: -100%;
+                        width: 100%; height: 100%;
                         background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.1), transparent);
                         transition: left 0.3s ease;
                     }
@@ -363,24 +474,17 @@ $accent-emerald: #10b981;
                         color: $text-primary;
                         padding-left: 20px;
                         border-left: 3px solid $accent-emerald;
-
-                        &::before {
-                            left: 100%;
-                        }
+                        &::before { left: 100%; }
                     }
 
                     &.logout {
                         color: $danger-light;
-
                         &:hover {
                             background: rgba(239, 68, 68, 0.1);
                             color: $danger-light;
                             border-left-color: $danger-color;
                         }
-
-                        svg {
-                            color: $danger-light;
-                        }
+                        svg { color: $danger-light; }
                     }
 
                     svg {
@@ -397,57 +501,45 @@ $accent-emerald: #10b981;
             }
         }
     }
+    
 }
 
 // Responsive design
 @media (max-width: 1200px) {
     .navbar {
         padding: 14px 20px;
-
         .logo {
             font-size: 18px;
             gap: 10px;
-
-            .logo-icon {
-                width: 36px;
-                height: 36px;
-            }
+            .logo-icon { width: 36px; height: 36px; }
         }
+        .icons { gap: 16px; }
+    }
+}
 
-        .icons {
-            gap: 16px;
-        }
+@media (max-width: 900px) {
+    .navbar .icons .profile-selector {
+        .profile-trigger-label { max-width: 80px; }
+        .log-profile-btn span { display: none; }
     }
 }
 
 @media (max-width: 768px) {
     .navbar {
         padding: 12px 16px;
-
         .logo {
             font-size: 16px;
             gap: 8px;
-
-            .logo-icon {
-                width: 32px;
-                height: 32px;
-            }
+            .logo-icon { width: 32px; height: 32px; }
         }
-
         .icons {
             gap: 12px;
-
             .streak-display {
                 padding: 8px 12px;
-
-                .streak-text {
-                    display: none;
-                }
+                .streak-text { display: none; }
             }
-
-            .user span {
-                display: none;
-            }
+            .user span { display: none; }
+            .profile-selector .profile-trigger-label { display: none; }
         }
     }
 }
@@ -455,22 +547,10 @@ $accent-emerald: #10b981;
 @media (max-width: 480px) {
     .navbar {
         padding: 10px 12px;
-
-        .logo span {
-            display: none;
-        }
-
+        .logo span { display: none; }
         .icons {
             gap: 8px;
-
-            .notification, 
-            .settings-section .settings-icon {
-                padding: 8px;
-            }
-
-            .user {
-                padding: 6px 8px;
-            }
+            .user { padding: 6px 8px; }
         }
     }
 }

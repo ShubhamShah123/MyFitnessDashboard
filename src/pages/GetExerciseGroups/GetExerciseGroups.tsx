@@ -1,9 +1,6 @@
-// TODO: WORK ON THE UPDATE EXCERSIZE AND UPLOAD TO GITHUB
- 
 import { useEffect, useState } from "react";
 import "./get-exercise-groups.scss";
 import { deleteSchedWorkoutUrl, getExerciseGroupsUrl, testAddNewExercise } from "../../url";
-
 
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
@@ -12,13 +9,15 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import ModalBox from "../../components/modalBox/ModalBox";
+import { useCookies } from "react-cookie";
+
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 interface ExerciseDetail {
   exName: string;
   desc: string;
   sets: string | number;
-  reps: string;
+  reps: string | number;
   id: string;
 }
 
@@ -28,17 +27,37 @@ interface WorkoutGroup {
   details: { [key: string]: ExerciseDetail } | "NA";
 }
 
+// ─── Normalizer ───────────────────────────────────────────────────────────────
 
+function normalizeExercise(raw: Record<string, unknown>, id: string): ExerciseDetail {
+  return {
+    id,
+    exName: (raw.exName ?? raw.Name ?? "") as string,
+    desc:   (raw.desc  ?? raw.Desc  ?? "") as string,
+    sets:   (raw.sets  ?? raw.Sets  ?? "") as string | number,
+    reps:   (raw.reps  ?? raw.Reps  ?? "") as string | number,
+  };
+}
+
+function normalizeGroups(raw: WorkoutGroup[]): WorkoutGroup[] {
+  return raw.map((group) => {
+    if (group.details === "NA") return group;
+    const normalized: { [key: string]: ExerciseDetail } = {};
+    for (const [k, v] of Object.entries(group.details as object)) {
+      normalized[k] = normalizeExercise(v as Record<string, unknown>, k);
+    }
+    return { ...group, details: normalized };
+  });
+}
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
-
-
 
 const GROUP_ICONS: Record<string, string> = {
   "Chest & Back": "🏋️",
   "Shoulders & Arms": "💪",
   Legs: "🦵",
   Rest: "😴",
+  REST: "😴",
   "Cardio & Abs": "🔥",
 };
 
@@ -64,10 +83,10 @@ function getRowType(key: string, ex: ExerciseDetail): RowType {
 }
 
 function getTagLabel(type: RowType): string | null {
-  if (type === "superset") return "Superset";
+  if (type === "superset")  return "Superset";
   if (type === "giant-set") return "Giant Set";
-  if (type === "cardio") return "Cardio";
-  if (type === "warmup") return "Warmup";
+  if (type === "cardio")    return "Cardio";
+  if (type === "warmup")    return "Warmup";
   return null;
 }
 
@@ -79,23 +98,18 @@ const GetExerciseGroups = () => {
   const [error, setError] = useState<string | null>(null);
   const [workoutGroups, setWorkoutGroups] = useState<WorkoutGroup[]>([]);
   const [addDialogOpen, setAddDialogOpen] = useState(false);
+  const [schedProfile,,] = useCookies(["profile"]);
   const [addForm, setAddForm] = useState({
-		id: "",
-		name: "",
-		sets: "",
-		reps: "",
-		desc: "",
-	});
+    id: "", name: "", sets: "", reps: "", desc: "",
+  });
   const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
   const [confirmationData, setConfirmationData] = useState({
-    title: "",
-    body: "",
-    exerciseDescription: "",
+    title: "", body: "", exerciseDescription: "",
   });
-  // Handling Delete
+
+  // ── Delete ─────────────────────────────────────────────────────────────────
   const handleDelete = async (gId: string, exId: string) => {
-    const url = deleteSchedWorkoutUrl;
-    const response = await fetch(url, {
+    const response = await fetch(deleteSchedWorkoutUrl, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ sId: gId, exId: exId }),
@@ -110,91 +124,85 @@ const GetExerciseGroups = () => {
     });
     setConfirmationModalOpen(true);
 
-    // ✅ Remove from local state immediately
     setWorkoutGroups((prevGroups) =>
       prevGroups.map((group) => {
         if (group.key !== gId) return group;
-
-        const existingDetails = { ...(group.details as { [k: string]: ExerciseDetail }) };
-        delete existingDetails[exId];
-
-        return {
-          ...group,
-          details: existingDetails,
-        };
+        const existing = { ...(group.details as { [k: string]: ExerciseDetail }) };
+        delete existing[exId];
+        return { ...group, details: existing };
       })
     );
   };
-  // Hanlding update
 
-  // Open Add Exercise dialog
-	const handleAddExercise = (gk: string) => {
+  // ── Add ────────────────────────────────────────────────────────────────────
+  const handleAddExercise = (gk: string) => {
     setSelectedGroupKey(gk);
-		setAddForm({ id: "", name: "", sets: "", reps: "", desc: "" });
-		setAddDialogOpen(true);
-    console.log("Handling add exercise")
+    setAddForm({ id: "", name: "", sets: "", reps: "", desc: "" });
+    setAddDialogOpen(true);
+    console.log("Handling add exercise");
   };
 
-  // Handle input change in Add Exercise dialog
-	const handleAddChange = (field: string, value: string) => {
-		setAddForm((prev) => ({ ...prev, [field]: value }));
-	};
+  const handleAddChange = (field: string, value: string) => {
+    setAddForm((prev) => ({ ...prev, [field]: value }));
+  };
 
   const handleAddSubmit = async () => {
-    console.log("Handle add submit")
-    console.log(addForm)
-    console.log("Key: ", selectedGroupKey)
+    console.log("Handle add submit");
+    console.log(addForm);
+    console.log("Key: ", selectedGroupKey);
+
     const newExercise: ExerciseDetail = {
-			id: addForm.id,
-			exName: addForm.name,
-			sets: addForm.sets,
-			reps: addForm.reps,
-			desc: addForm.desc,
-		};
+      id:     addForm.id,
+      exName: addForm.name,
+      sets:   addForm.sets,
+      reps:   addForm.reps,
+      desc:   addForm.desc,
+    };
+
     const url = testAddNewExercise + selectedGroupKey;
-    console.log(url)
-    console.log(newExercise)
+    console.log(url);
+    console.log(newExercise);
+
     const response = await fetch(url, {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify(newExercise),
-			});
-			const result = await response.json();
-			console.log("Addition Response:", result);
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newExercise),
+    });
+    const result = await response.json();
+    console.log("Addition Response:", result);
 
-			// Show confirmation modal with response message
-			setConfirmationData({
-				title: "Exercise Added",
-				body: result.status || "Exercise has been successfully added!",
-				exerciseDescription: result.key ? `Exercise ID: ${result.key}` : "",
-			});
-      setWorkoutGroups((prevGroups) => prevGroups.map((group) => {
-        if (group.key != selectedGroupKey) return group;
-        const exsitingDetails = group.details === "NA" ? {}:{...(group.details as object)};
-        return {
-          ...group,
-          details:{
-            ...exsitingDetails,
-            [addForm.id]: newExercise,
-          }
-        }
-      }));
-			setConfirmationModalOpen(true);
-      setAddDialogOpen(false);
-  }
+    setConfirmationData({
+      title: "Exercise Added",
+      body: result.status || "Exercise has been successfully added!",
+      exerciseDescription: result.key ? `Exercise ID: ${result.key}` : "",
+    });
 
+    setWorkoutGroups((prevGroups) =>
+      prevGroups.map((group) => {
+        if (group.key !== selectedGroupKey) return group;
+        const existing = group.details === "NA" ? {} : { ...(group.details as object) };
+        return { ...group, details: { ...existing, [addForm.id]: newExercise } };
+      })
+    );
+
+    setConfirmationModalOpen(true);
+    setAddDialogOpen(false);
+  };
+
+  // ── Fetch ──────────────────────────────────────────────────────────────────
   useEffect(() => {
     const getExerciseGroups = async () => {
       try {
         setLoading(true);
-        const res = await fetch(getExerciseGroupsUrl);
+        const res  = await fetch(getExerciseGroupsUrl + "?profile=" + schedProfile.profile);
         const json = await res.json();
         console.log("########## EXERCISE GROUPS RESPONSE #################");
         console.log(json);
         console.log("#####################################################");
-        if (json.data) {
-          setWorkoutGroups(json.data);
-        }
+
+        // Profile 1 returns { data: [...] }, profile 2 returns the array directly
+        const raw: WorkoutGroup[] = Array.isArray(json) ? json : json.data ?? [];
+        setWorkoutGroups(normalizeGroups(raw));
       } catch (err) {
         setError("Error fetching exercise data");
         console.error("Error:", err);
@@ -206,6 +214,7 @@ const GetExerciseGroups = () => {
     getExerciseGroups();
   }, []);
 
+  // ── Render states ──────────────────────────────────────────────────────────
   if (loading) {
     return (
       <div className="ExerciseGroups">
@@ -231,6 +240,7 @@ const GetExerciseGroups = () => {
     );
   }
 
+  // ── Main render ────────────────────────────────────────────────────────────
   return (
     <div className="ExerciseGroups">
       <div className="eg-container">
@@ -291,21 +301,14 @@ const GetExerciseGroups = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {sortExerciseKeys(
-                        Object.keys(group.details as object)
-                      ).map((key) => {
-                        const ex = (
-                          group.details as { [k: string]: ExerciseDetail }
-                        )[key];
+                      {sortExerciseKeys(Object.keys(group.details as object)).map((key) => {
+                        const ex = (group.details as { [k: string]: ExerciseDetail })[key];
                         const rowType = getRowType(key, ex);
                         const isCardio = rowType === "cardio";
                         const tag = getTagLabel(rowType);
 
                         return (
-                          <tr
-                            key={key}
-                            className={`eg-row eg-row--${rowType}`}
-                          >
+                          <tr key={key} className={`eg-row eg-row--${rowType}`}>
                             {/* Key */}
                             <td>
                               <span className="eg-key">{key}</span>
@@ -324,9 +327,7 @@ const GetExerciseGroups = () => {
                               {isCardio ? (
                                 <span className="eg-dash">—</span>
                               ) : (
-                                <span className="eg-sets-reps">
-                                  {ex.sets || "—"}
-                                </span>
+                                <span className="eg-sets-reps">{ex.sets || "—"}</span>
                               )}
                             </td>
 
@@ -337,20 +338,14 @@ const GetExerciseGroups = () => {
                                   {ex.desc || "—"}
                                 </span>
                               ) : (
-                                <span className="eg-sets-reps">
-                                  {ex.reps || "—"}
-                                </span>
+                                <span className="eg-sets-reps">{ex.reps || "—"}</span>
                               )}
                             </td>
 
                             {/* Type Tag */}
                             <td>
                               {tag && (
-                                <span
-                                  className={`eg-tag eg-tag--${rowType}`}
-                                >
-                                  {tag}
-                                </span>
+                                <span className={`eg-tag eg-tag--${rowType}`}>{tag}</span>
                               )}
                             </td>
 
@@ -391,81 +386,56 @@ const GetExerciseGroups = () => {
           );
         })}
       </div>
-      {/* Confirmation Modal for Add/Delete Operations */}
-			<ModalBox
-				open={confirmationModalOpen}
-				onClose={() => setConfirmationModalOpen(false)}
-				title={confirmationData.title}
-				body={confirmationData.body}
-				exerciseDescription={confirmationData.exerciseDescription}
-			/>
-      <Dialog
-				open={addDialogOpen}
-				onClose={() => setAddDialogOpen(false)}
-				disableRestoreFocus
-				>
-				<DialogTitle>Add New Exercise</DialogTitle>
-				<DialogContent>
-					<TextField
-						margin="dense"
-						label="ID"
-						type="text"
-						fullWidth
-						variant="standard"
-						value={addForm.id}
-						onChange={(e) => handleAddChange("id", e.target.value)}
-						placeholder="e.g., 1A, 2B, 5"
-					/>
-					<TextField
-						margin="dense"
-						label="Exercise Name"
-						type="text"
-						fullWidth
-						variant="standard"
-						value={addForm.name}
-						onChange={(e) => handleAddChange("name", e.target.value)}
-					/>
-					<TextField
-						margin="dense"
-						label="Sets"
-						type="text"
-						fullWidth
-						variant="standard"
-						value={addForm.sets}
-						onChange={(e) => handleAddChange("sets", e.target.value)}
-						placeholder="e.g., 3 or leave empty"
-					/>
-					<TextField
-						margin="dense"
-						label="Reps"
-						type="text"
-						fullWidth
-						variant="standard"
-						value={addForm.reps}
-						onChange={(e) => handleAddChange("reps", e.target.value)}
-						placeholder="e.g., 12-10-8 or leave empty"
-					/>
-					<TextField
-						margin="dense"
-						label="Description"
-						type="text"
-						fullWidth
-						variant="standard"
-						multiline
-						rows={3}
-						value={addForm.desc}
-						onChange={(e) => handleAddChange("desc", e.target.value)}
-					/>
-				</DialogContent>
-				<DialogActions>
-					<Button onClick={() => setAddDialogOpen(false)}>Cancel</Button>
-					<Button variant="contained" onClick={handleAddSubmit}>
-						Add Exercise
-					</Button>
-				</DialogActions>
-			</Dialog>
+
+      {/* Confirmation Modal */}
+      <ModalBox
+        open={confirmationModalOpen}
+        onClose={() => setConfirmationModalOpen(false)}
+        title={confirmationData.title}
+        body={confirmationData.body}
+        exerciseDescription={confirmationData.exerciseDescription}
+      />
+
+      {/* Add Exercise Dialog */}
+      <Dialog open={addDialogOpen} onClose={() => setAddDialogOpen(false)} disableRestoreFocus>
+        <DialogTitle>Add New Exercise</DialogTitle>
+        <DialogContent>
+          <TextField
+            margin="dense" label="ID" type="text" fullWidth variant="standard"
+            value={addForm.id}
+            onChange={(e) => handleAddChange("id", e.target.value)}
+            placeholder="e.g., 1A, 2B, 5"
+          />
+          <TextField
+            margin="dense" label="Exercise Name" type="text" fullWidth variant="standard"
+            value={addForm.name}
+            onChange={(e) => handleAddChange("name", e.target.value)}
+          />
+          <TextField
+            margin="dense" label="Sets" type="text" fullWidth variant="standard"
+            value={addForm.sets}
+            onChange={(e) => handleAddChange("sets", e.target.value)}
+            placeholder="e.g., 3 or leave empty"
+          />
+          <TextField
+            margin="dense" label="Reps" type="text" fullWidth variant="standard"
+            value={addForm.reps}
+            onChange={(e) => handleAddChange("reps", e.target.value)}
+            placeholder="e.g., 12-10-8 or leave empty"
+          />
+          <TextField
+            margin="dense" label="Description" type="text" fullWidth variant="standard"
+            multiline rows={3}
+            value={addForm.desc}
+            onChange={(e) => handleAddChange("desc", e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setAddDialogOpen(false)}>Cancel</Button>
+          <Button variant="contained" onClick={handleAddSubmit}>Add Exercise</Button>
+        </DialogActions>
+      </Dialog>
     </div>
-    
   );
 };
 

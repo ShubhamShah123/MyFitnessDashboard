@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation  } from "react-router-dom";
 import {
 	deleteSchedWorkoutUrl,
 	getWorkoutDetailsUrl,
@@ -18,18 +18,20 @@ import "./workoutDetail.scss";
 import ModalBox from "../../components/modalBox/ModalBox";
 
 interface ExerciseDetail {
-	desc: string;
-	exercise: string;
+	Desc: string;
+	Name: string;
 	id: string;
-	reps: string;
-	sets: string;
+	Reps: string;
+	Sets: string;
 	gif?: string | null;
 }
 
 const WorkoutDetail = () => {
 	const { id } = useParams<{ id: string }>();
+	const location = useLocation();
 	const navigate = useNavigate();
 	const [exerciseID, setExerciseId] = useState<string | null>(null);
+	const { profileID, selectedWeek } = location.state || {};
 
 	// Workout and exercise data states
 	const [exerciseDetails, setExerciseDetails] = useState<ExerciseDetail[]>([]);
@@ -51,11 +53,11 @@ const WorkoutDetail = () => {
 	const [editDialogOpen, setEditDialogOpen] = useState(false);
 	const [editForm, setEditForm] = useState({
 		name: "",
-		sets: "",
-		reps: "",
-		desc: "",
+		Sets: "",
+		Reps: "",
+		Desc: "",
 	});
-	const [selectedExerciseId, setSelectedExerciseId] = useState<string | null>(
+	const [selectedExerciseId, SetselectedExerciseId] = useState<string | null>(
 		null
 	);
 
@@ -64,20 +66,22 @@ const WorkoutDetail = () => {
 	const [addForm, setAddForm] = useState({
 		id: "",
 		name: "",
-		sets: "",
-		reps: "",
-		desc: "",
+		Sets: "",
+		Reps: "",
+		Desc: "",
 	});
 
 	// Fetch workout exercises when component mounts or id changes
 	useEffect(() => {
 		const fetchWorkoutDetail = async () => {
 			console.log("Fetching workout details for ID:", id);
+			console.log("Elements from prev: profileID: ", profileID)
+			console.log("Elements from prev: selectedWeek: ", selectedWeek)
 			try {
-				const workoutDataRequest = await fetch(getWorkoutDetailsUrl + "/" + id);
+				const workoutDataRequest = await fetch(getWorkoutDetailsUrl + "?profile=" + profileID + "&id=" + id);
 				const wdResp = await workoutDataRequest.json();
 				console.log("API Response:", wdResp);
-				
+
 				setDayValue(wdResp.data.name);
 				console.log("The ID is " + id);
 				setExerciseId(id || null);
@@ -87,10 +91,10 @@ const WorkoutDetail = () => {
 				const mappedExercises: ExerciseDetail[] = Object.entries(details).map(
 					([key, item]: [string, any]) => ({
 						id: key,
-						exercise: item.exName || "",
-						sets: item.sets || "",
-						reps: item.reps || "",
-						desc: item.desc || "",
+						Name: item.Name || "",
+						Sets: String(item.Sets ?? ""),
+						Reps: item.Reps || "",
+						Desc: item.Desc || "",
 						gif: null,
 					})
 				);
@@ -123,12 +127,12 @@ const WorkoutDetail = () => {
 		const exercise = exerciseDetails.find((e) => e.id === exerciseId);
 		if (exercise) {
 			setEditForm({
-				name: exercise.exercise,
-				sets: exercise.sets,
-				reps: exercise.reps,
-				desc: exercise.desc,
+				name: exercise.Name,
+				Sets: exercise.Sets,
+				Reps: exercise.Reps,
+				Desc: exercise.Desc,
 			});
-			setSelectedExerciseId(exerciseId);
+			SetselectedExerciseId(exerciseId);
 			setEditDialogOpen(true);
 		}
 	};
@@ -196,10 +200,10 @@ const WorkoutDetail = () => {
 					ex.id === selectedExerciseId
 						? {
 								...ex,
-								exercise: editForm.name,
-								sets: editForm.sets,
-								reps: editForm.reps,
-								desc: editForm.desc,
+								Name: editForm.name,
+								Sets: editForm.Sets,
+								Reps: editForm.Reps,
+								Desc: editForm.Desc,
 							}
 						: ex
 				)
@@ -228,7 +232,7 @@ const WorkoutDetail = () => {
 
 	// Open Add Exercise dialog
 	const handleAddExercise = () => {
-		setAddForm({ id: "", name: "", sets: "", reps: "", desc: "" });
+		setAddForm({ id: "", name: "", Sets: "", Reps: "", Desc: "" });
 		setAddDialogOpen(true);
 	};
 
@@ -244,10 +248,10 @@ const WorkoutDetail = () => {
 
 		const newExercise: ExerciseDetail = {
 			id: addForm.id,
-			exercise: addForm.name,
-			sets: addForm.sets,
-			reps: addForm.reps,
-			desc: addForm.desc,
+			Name: addForm.name,
+			Sets: addForm.Sets,
+			Reps: addForm.Reps,
+			Desc: addForm.Desc,
 		};
 
 		try {
@@ -308,8 +312,8 @@ const WorkoutDetail = () => {
 
 	const totalExercises = exerciseDetails.length;
 	const totalSets = exerciseDetails.reduce((sum, e) => {
-		const sets = parseInt(e.sets, 10);
-		return sum + (isNaN(sets) ? 0 : sets);
+		const Sets = parseInt(e.Sets, 10);
+		return sum + (isNaN(Sets) ? 0 : Sets);
 	}, 0);
 	const estimatedDuration = Math.round(totalSets * 2.5);
 
@@ -355,7 +359,7 @@ const WorkoutDetail = () => {
 						<span>~{estimatedDuration} min</span>
 					</div>
 					<div className="stat-item">
-						<span>{totalSets} total sets</span>
+						<span>{totalSets} total Sets</span>
 					</div>
 				</div>
 			</div>
@@ -394,9 +398,9 @@ const WorkoutDetail = () => {
 							<thead className="table-header">
 								<tr>
 									<th className="exercise-col">Exercise</th>
-									<th className="sets-col">Sets</th>
-									<th className="reps-col">Reps</th>
-									<th className="description-col">Instructions</th>
+									<th className="Sets-col">Sets</th>
+									<th className="Reps-col">Reps</th>
+									<th className="Description-col">Instructions</th>
 									<th className="actions-col">Actions</th>
 								</tr>
 							</thead>
@@ -407,26 +411,26 @@ const WorkoutDetail = () => {
 											className="exercise-cell"
 											onClick={() => id && handleExerciseClick(exercise, id)}
 										>
-											<div className="exercise-name">{exercise.exercise}</div>
+											<div className="exercise-name">{exercise.Name}</div>
 										</td>
-										<td className="sets-cell">
+										<td className="Sets-cell">
 											<div className="stat-badge">
-												{exercise.sets || "—"}
+												{exercise.Sets || "—"}
 											</div>
 										</td>
-										<td className="reps-cell">
+										<td className="Reps-cell">
 											<div className="stat-badge">
-												{exercise.reps || "—"}
+												{exercise.Reps || "—"}
 											</div>
 										</td>
 										<td
-											className={`description-cell ${
-												!exercise.desc ? "empty" : ""
+											className={`Description-cell ${
+												!exercise.Desc ? "empty" : ""
 											}`}
 										>
-											{exercise.desc ? (
-												<div className="description-content">
-													{exercise.desc}
+											{exercise.Desc ? (
+												<div className="Description-content">
+													{exercise.Desc}
 												</div>
 											) : (
 												"No specific instructions provided"
@@ -517,8 +521,8 @@ const WorkoutDetail = () => {
 						type="text"
 						fullWidth
 						variant="standard"
-						value={editForm.sets}
-						onChange={(e) => handleEditChange("sets", e.target.value)}
+						value={editForm.Sets}
+						onChange={(e) => handleEditChange("Sets", e.target.value)}
 					/>
 					<TextField
 						margin="dense"
@@ -526,8 +530,8 @@ const WorkoutDetail = () => {
 						type="text"
 						fullWidth
 						variant="standard"
-						value={editForm.reps}
-						onChange={(e) => handleEditChange("reps", e.target.value)}
+						value={editForm.Reps}
+						onChange={(e) => handleEditChange("Reps", e.target.value)}
 					/>
 					<TextField
 						margin="dense"
@@ -537,8 +541,8 @@ const WorkoutDetail = () => {
 						variant="standard"
 						multiline
 						rows={3}
-						value={editForm.desc}
-						onChange={(e) => handleEditChange("desc", e.target.value)}
+						value={editForm.Desc}
+						onChange={(e) => handleEditChange("Desc", e.target.value)}
 					/>
 				</DialogContent>
 				<DialogActions>
@@ -554,7 +558,7 @@ const WorkoutDetail = () => {
 				open={addDialogOpen}
 				onClose={() => setAddDialogOpen(false)}
 				disableRestoreFocus
-				>
+			>
 				<DialogTitle>Add New Exercise</DialogTitle>
 				<DialogContent>
 					<TextField
@@ -582,8 +586,8 @@ const WorkoutDetail = () => {
 						type="text"
 						fullWidth
 						variant="standard"
-						value={addForm.sets}
-						onChange={(e) => handleAddChange("sets", e.target.value)}
+						value={addForm.Sets}
+						onChange={(e) => handleAddChange("Sets", e.target.value)}
 						placeholder="e.g., 3 or leave empty"
 					/>
 					<TextField
@@ -592,8 +596,8 @@ const WorkoutDetail = () => {
 						type="text"
 						fullWidth
 						variant="standard"
-						value={addForm.reps}
-						onChange={(e) => handleAddChange("reps", e.target.value)}
+						value={addForm.Reps}
+						onChange={(e) => handleAddChange("Reps", e.target.value)}
 						placeholder="e.g., 12-10-8 or leave empty"
 					/>
 					<TextField
@@ -604,8 +608,8 @@ const WorkoutDetail = () => {
 						variant="standard"
 						multiline
 						rows={3}
-						value={addForm.desc}
-						onChange={(e) => handleAddChange("desc", e.target.value)}
+						value={addForm.Desc}
+						onChange={(e) => handleAddChange("Desc", e.target.value)}
 					/>
 				</DialogContent>
 				<DialogActions>

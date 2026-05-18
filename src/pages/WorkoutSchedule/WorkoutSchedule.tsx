@@ -5,91 +5,139 @@ import "./workout-schedule.scss";
 import { getWorkoutScheduleUrl } from "../../url";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
+import { useCookies } from "react-cookie";
 
 interface WorkoutDay {
   exKey: string;
-  id: string;
+  day: string;
   name: string;
-  dayNumber: number;
-  weekNumber: number;
+  dayNumber?: number;
+  weekNumber?: string;
 }
+
 
 const WorkoutSchedule = () => {
   const [schedule, setSchedule] = useState<WorkoutDay[]>([]);
+  const [selectedProfile, setSelectedProfile] = useState(1);
   const [selectedWeek, setSelectedWeek] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [schedProfile,,] = useCookies(['profile']);
+  const [profileID, setProfileID] = useState(0);
   const navigate = useNavigate();
 
-  const dayNames = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
   useEffect(() => {
     const getWorkoutSchedule = async () => {
-      try {
-        const response = await fetch(getWorkoutScheduleUrl);
-        const data = await response.json();
-        console.log("Data: ", data);
-        
-        if (data.code === 200) {
-          // Transform the nested data structure into a flat array for the selected week
-          const weekData = data.data[selectedWeek];
-          const workoutDays: WorkoutDay[] = Object.keys(weekData).map((dayNum) => ({
-            ...weekData[dayNum],
-            dayNumber: parseInt(dayNum),
-            weekNumber: selectedWeek,
-          }));
-          setSchedule(workoutDays);
-        }
-      } catch (error) {
-        console.error("Error fetching workout schedule:", error);
-      } finally {
-        setLoading(false);
-      }
+      console.log("Get Workout Schedule.");
+      setLoading(false);
+      console.log("Profile from cookies: ", schedProfile.profile)
+      setSelectedProfile(schedProfile.profile)
     };
 
     getWorkoutSchedule();
-  }, [selectedWeek]);
+  }, []);
 
-  const handleCardClick = (exKey: string, id: string) => {
-    console.log("Clicked card ID:", id);
+  const getSchedule = async (profileId: number, weekNumber?: number) => {
+    console.log("Get Schedule Clicked: ", profileId);
+    setSchedule([]);
+    setProfileID(profileId);
+    let url = getWorkoutScheduleUrl + "?profile=" + profileId;
+    if (profileId === 1 && weekNumber !== undefined) {
+      url += "&week=" + weekNumber;
+    }
+    console.log(url);
+    let request = await fetch(url, { method: "GET" });
+    let response = await request.json();
+    console.log("Request: ", request);
+    console.log("Response: ", response);
+    if (profileId === 1) {
+      console.log("Profile 1, Week:", weekNumber);
+      setSchedule(response.data); // wire up when ready
+    } else {
+      setSchedule(response.data);
+    }
+  };
+
+  const handleCardClick = (exKey: string, selectedWeek: number) => {
     console.log("Exercise Key:", exKey);
-    // Navigate to the workout detail page with the exKey or id
-    navigate(`/dashboard/WorkoutDetail/${exKey}`);
+    console.log("Week:", selectedWeek);
+    console.log("PropfileID: ",profileID)
+    navigate(`/dashboard/WorkoutDetail/${exKey}`,{
+      state: {
+        profileID,
+        selectedWeek
+      }
+    });
   };
 
   return (
     <div className="WorkoutSchedule">
       <h1>Weekly Workout Plan</h1>
 
-      {/* Week Selector */}
+      {/* Profile + Week Selector */}
       <div className="week-selector">
-        <label htmlFor="week-select">Select Week: </label>
+        <label htmlFor="profile-select">Select Profile: </label>
         <select
-          id="week-select"
-          value={selectedWeek}
-          onChange={(e) => setSelectedWeek(parseInt(e.target.value))}
+          id="profile-select"
+          value={selectedProfile}
+          onChange={(e) => {
+            setSelectedProfile(parseInt(e.target.value));
+            setSelectedWeek(1); // reset week when profile changes
+          }}
         >
-          {Array.from({ length: 12 }, (_, i) => i + 1).map((week) => (
-            <option key={week} value={week}>
-              Week {week}
+          {Array.from({ length: 2 }, (_, i) => i + 1).map((profile) => (
+            <option key={profile} value={profile}>
+              Profile {profile}
             </option>
           ))}
         </select>
+
+        {/* Conditionally show week dropdown only for Profile 1 */}
+        {selectedProfile === 1 && (
+          <>
+            <label htmlFor="week-select" style={{ marginLeft: "12px" }}>
+              Select Week:{" "}
+            </label>
+            <select
+              id="week-select"
+              value={selectedWeek}
+              onChange={(e) => setSelectedWeek(parseInt(e.target.value))}
+            >
+              {Array.from({ length: 12 }, (_, i) => i + 1).map((week) => (
+                <option key={week} value={week}>
+                  Week {week}
+                </option>
+              ))}
+            </select>
+          </>
+        )}
+
+        <button
+          className="log-btn"
+          onClick={() =>
+            getSchedule(
+              selectedProfile,
+              selectedProfile === 1 ? selectedWeek : undefined
+            )
+          }
+        >
+          Get Schedule
+        </button>
       </div>
 
       <div className="schedule-grid">
         {schedule.map((workout) => (
           <div
-            className={`day-card ${workout.name === "Rest" ? "rest-day" : ""}`}
-            key={workout.id}
-            onClick={() => handleCardClick(workout.exKey, workout.id)}
+            className={`day-card ${workout.name === "REST" ? "rest-day" : ""}`}
+            key={workout.exKey}
+            onClick={() => handleCardClick(workout.exKey, selectedWeek)}
           >
-            <div className="day-name">{dayNames[workout.dayNumber - 1]}</div>
+            <div className="day-name">{workout.day}</div>
             <div className="exercise-text">{workout.name}</div>
           </div>
         ))}
       </div>
 
-      {/* MUI Backdrop with Loader */}
       <Backdrop
         sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={loading}

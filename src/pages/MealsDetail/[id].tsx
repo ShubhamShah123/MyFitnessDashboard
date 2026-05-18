@@ -4,6 +4,7 @@ import "./meals-detail.scss";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import { getMealsDetailsUrl } from "../../url";
+import { useCookies } from "react-cookie";
 
 interface MealDetail {
   meal_num: number;
@@ -21,17 +22,18 @@ interface MealPlan {
 
 const MealsInfo = () => {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
   const [mealPlan, setMealPlan] = useState<MealPlan | null>(null);
   const [loading, setLoading] = useState(true);
+  const [profileId,,] = useCookies(['profile'])
+  const navigate = useNavigate();
+
 
   useEffect(() => {
     const getMealInfo = async () => {
       try {
         if (!id) return;
 
-        console.clear();
-        const url = getMealsDetailsUrl + id;
+        const url = getMealsDetailsUrl + "?profile=" + profileId.profile + "&id=" + id;
         console.log("Fetching from:", url);
 
         const res = await fetch(url);

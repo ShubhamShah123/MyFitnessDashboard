@@ -10,6 +10,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [cookies,setCookie] = useCookies(['key'])
+  const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
 
   useEffect(()=> {
@@ -45,7 +46,14 @@ const Login = () => {
     const loginResponse = await loginRequest.json();
     console.log("response from server: ", loginResponse);
     if(loginResponse.status_code == 200){
-      setCookie('key', loginResponse['key'], { path: '/' })
+      console.log("Login Succes: ",rememberMe)
+      if(rememberMe){
+        setCookie('key', loginResponse['key'], { path: '/',maxAge: 60 * 60 * 24 * 365 })
+      }
+      else{
+        setCookie('key', loginResponse['key'], { path: '/' })
+      }
+      
       alert(loginResponse.msg)
       navigate(`/dashboard`)
     }
@@ -151,7 +159,15 @@ const Login = () => {
           {/* Remember Me & Forgot Password */}
           <div className="form-options">
             <label className="remember-me">
-              <input type="checkbox" />
+              <input 
+                type="checkbox"
+                checked={rememberMe}
+                onChange={
+                  (e) => {
+                    setRememberMe(e.target.checked)
+                    console.log("Remember Me: ", e.target.checked)
+                  }
+                } />
               <span className="remember-label">Remember me</span>
             </label>
             <button
