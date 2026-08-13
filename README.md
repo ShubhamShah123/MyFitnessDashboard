@@ -114,9 +114,13 @@ npx expo start
 
 Add screenshots here for:
 - Dashboard overview
+  <img width="1900" height="905" alt="image" src="https://github.com/user-attachments/assets/e90c7245-a891-4c4f-9b4a-5498649e9a49" />
+
 - Workout analytics
+  <img width="1908" height="916" alt="image" src="https://github.com/user-attachments/assets/cd8b2df0-3946-4a5c-a04d-d021629d27a9" />
+
 - Nutrition tracking
-- Mobile application screens
+- <img width="1871" height="887" alt="image" src="https://github.com/user-attachments/assets/9c0f444e-bdf3-4525-be17-0749d9a98871" />
 
 ---
 
